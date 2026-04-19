@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'errors.dart';
 import 'value_failure.dart';
@@ -38,7 +38,6 @@ typedef CustomValidate = String? Function<T>(Either<ValueFailure, T>)?;
 //
 // orEmpty: useful for text or collection values. returns an empty string or empty collection
 // orZero: useful for numeric values, returns 0 if invalid
-
 @immutable
 abstract class ValueObject<T> {
   const ValueObject();

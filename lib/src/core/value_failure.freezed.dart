@@ -12,7 +12,7 @@ part of 'value_failure.dart';
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
-mixin _$ValueFailure implements DiagnosticableTreeMixin {
+mixin _$ValueFailure {
 
 /// string name of the object with failure
  String get nameObject; String get message;
@@ -23,12 +23,6 @@ mixin _$ValueFailure implements DiagnosticableTreeMixin {
 $ValueFailureCopyWith<ValueFailure> get copyWith => _$ValueFailureCopyWithImpl<ValueFailure>(this as ValueFailure, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message));
-}
 
 @override
 bool operator ==(Object other) {
@@ -40,7 +34,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure(nameObject: $nameObject, message: $message)';
 }
 
@@ -357,7 +351,7 @@ return insufficientStock(_that.nameObject,_that.message,_that.available,_that.re
 /// @nodoc
 
 
-class Invalid extends ValueFailure with DiagnosticableTreeMixin {
+class Invalid extends ValueFailure {
   const Invalid({this.nameObject = '', this.message = ''}): super._();
   
 
@@ -372,12 +366,6 @@ class Invalid extends ValueFailure with DiagnosticableTreeMixin {
 $InvalidCopyWith<Invalid> get copyWith => _$InvalidCopyWithImpl<Invalid>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.invalid'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message));
-}
 
 @override
 bool operator ==(Object other) {
@@ -389,7 +377,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.invalid(nameObject: $nameObject, message: $message)';
 }
 
@@ -432,7 +420,7 @@ as String,
 /// @nodoc
 
 
-class ZeroValue extends ValueFailure with DiagnosticableTreeMixin {
+class ZeroValue extends ValueFailure {
   const ZeroValue({this.nameObject = '', this.message = ''}): super._();
   
 
@@ -447,12 +435,6 @@ class ZeroValue extends ValueFailure with DiagnosticableTreeMixin {
 $ZeroValueCopyWith<ZeroValue> get copyWith => _$ZeroValueCopyWithImpl<ZeroValue>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.zeroValue'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message));
-}
 
 @override
 bool operator ==(Object other) {
@@ -464,7 +446,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.zeroValue(nameObject: $nameObject, message: $message)';
 }
 
@@ -507,7 +489,7 @@ as String,
 /// @nodoc
 
 
-class EnumIsNone extends ValueFailure with DiagnosticableTreeMixin {
+class EnumIsNone extends ValueFailure {
   const EnumIsNone({this.nameObject = '', this.message = ''}): super._();
   
 
@@ -522,12 +504,6 @@ class EnumIsNone extends ValueFailure with DiagnosticableTreeMixin {
 $EnumIsNoneCopyWith<EnumIsNone> get copyWith => _$EnumIsNoneCopyWithImpl<EnumIsNone>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.enumIsNone'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message));
-}
 
 @override
 bool operator ==(Object other) {
@@ -539,7 +515,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.enumIsNone(nameObject: $nameObject, message: $message)';
 }
 
@@ -582,7 +558,7 @@ as String,
 /// @nodoc
 
 
-class StrEmpty extends ValueFailure with DiagnosticableTreeMixin {
+class StrEmpty extends ValueFailure {
   const StrEmpty({this.nameObject = '', this.message = ''}): super._();
   
 
@@ -597,12 +573,6 @@ class StrEmpty extends ValueFailure with DiagnosticableTreeMixin {
 $StrEmptyCopyWith<StrEmpty> get copyWith => _$StrEmptyCopyWithImpl<StrEmpty>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.strEmpty'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message));
-}
 
 @override
 bool operator ==(Object other) {
@@ -614,7 +584,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.strEmpty(nameObject: $nameObject, message: $message)';
 }
 
@@ -657,7 +627,7 @@ as String,
 /// @nodoc
 
 
-class StrMultiline extends ValueFailure with DiagnosticableTreeMixin {
+class StrMultiline extends ValueFailure {
   const StrMultiline({this.nameObject = '', this.message = ''}): super._();
   
 
@@ -672,12 +642,6 @@ class StrMultiline extends ValueFailure with DiagnosticableTreeMixin {
 $StrMultilineCopyWith<StrMultiline> get copyWith => _$StrMultilineCopyWithImpl<StrMultiline>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.strMultiline'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message));
-}
 
 @override
 bool operator ==(Object other) {
@@ -689,7 +653,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.strMultiline(nameObject: $nameObject, message: $message)';
 }
 
@@ -732,7 +696,7 @@ as String,
 /// @nodoc
 
 
-class StrMaxLength extends ValueFailure with DiagnosticableTreeMixin {
+class StrMaxLength extends ValueFailure {
   const StrMaxLength({this.nameObject = '', this.message = '', required this.maxAllow, required this.total}): super._();
   
 
@@ -751,12 +715,6 @@ class StrMaxLength extends ValueFailure with DiagnosticableTreeMixin {
 $StrMaxLengthCopyWith<StrMaxLength> get copyWith => _$StrMaxLengthCopyWithImpl<StrMaxLength>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.strMaxLength'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message))..add(DiagnosticsProperty('maxAllow', maxAllow))..add(DiagnosticsProperty('total', total));
-}
 
 @override
 bool operator ==(Object other) {
@@ -768,7 +726,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message,maxAllow,total);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.strMaxLength(nameObject: $nameObject, message: $message, maxAllow: $maxAllow, total: $total)';
 }
 
@@ -813,7 +771,7 @@ as int,
 /// @nodoc
 
 
-class StrMinLength extends ValueFailure with DiagnosticableTreeMixin {
+class StrMinLength extends ValueFailure {
   const StrMinLength({this.nameObject = '', this.message = '', required this.minAllow, required this.total}): super._();
   
 
@@ -832,12 +790,6 @@ class StrMinLength extends ValueFailure with DiagnosticableTreeMixin {
 $StrMinLengthCopyWith<StrMinLength> get copyWith => _$StrMinLengthCopyWithImpl<StrMinLength>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.strMinLength'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message))..add(DiagnosticsProperty('minAllow', minAllow))..add(DiagnosticsProperty('total', total));
-}
 
 @override
 bool operator ==(Object other) {
@@ -849,7 +801,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message,minAllow,total);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.strMinLength(nameObject: $nameObject, message: $message, minAllow: $minAllow, total: $total)';
 }
 
@@ -894,7 +846,7 @@ as int,
 /// @nodoc
 
 
-class StrOutRange extends ValueFailure with DiagnosticableTreeMixin {
+class StrOutRange extends ValueFailure {
   const StrOutRange({this.nameObject = '', this.message = '', required this.min, required this.max}): super._();
   
 
@@ -911,12 +863,6 @@ class StrOutRange extends ValueFailure with DiagnosticableTreeMixin {
 $StrOutRangeCopyWith<StrOutRange> get copyWith => _$StrOutRangeCopyWithImpl<StrOutRange>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.strOutRange'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message))..add(DiagnosticsProperty('min', min))..add(DiagnosticsProperty('max', max));
-}
 
 @override
 bool operator ==(Object other) {
@@ -928,7 +874,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message,min,max);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.strOutRange(nameObject: $nameObject, message: $message, min: $min, max: $max)';
 }
 
@@ -973,7 +919,7 @@ as num,
 /// @nodoc
 
 
-class StrInvalidChars extends ValueFailure with DiagnosticableTreeMixin {
+class StrInvalidChars extends ValueFailure {
   const StrInvalidChars({this.nameObject = '', this.message = ''}): super._();
   
 
@@ -988,12 +934,6 @@ class StrInvalidChars extends ValueFailure with DiagnosticableTreeMixin {
 $StrInvalidCharsCopyWith<StrInvalidChars> get copyWith => _$StrInvalidCharsCopyWithImpl<StrInvalidChars>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.strInvalidChars'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message));
-}
 
 @override
 bool operator ==(Object other) {
@@ -1005,7 +945,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.strInvalidChars(nameObject: $nameObject, message: $message)';
 }
 
@@ -1048,7 +988,7 @@ as String,
 /// @nodoc
 
 
-class StrNotContains extends ValueFailure with DiagnosticableTreeMixin {
+class StrNotContains extends ValueFailure {
   const StrNotContains({this.nameObject = '', this.message = '', this.substring = ''}): super._();
   
 
@@ -1065,12 +1005,6 @@ class StrNotContains extends ValueFailure with DiagnosticableTreeMixin {
 $StrNotContainsCopyWith<StrNotContains> get copyWith => _$StrNotContainsCopyWithImpl<StrNotContains>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.strNotContains'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message))..add(DiagnosticsProperty('substring', substring));
-}
 
 @override
 bool operator ==(Object other) {
@@ -1082,7 +1016,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message,substring);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.strNotContains(nameObject: $nameObject, message: $message, substring: $substring)';
 }
 
@@ -1126,7 +1060,7 @@ as String,
 /// @nodoc
 
 
-class StrNotStartsWith extends ValueFailure with DiagnosticableTreeMixin {
+class StrNotStartsWith extends ValueFailure {
   const StrNotStartsWith({this.nameObject = '', this.message = '', this.prefix = ''}): super._();
   
 
@@ -1143,12 +1077,6 @@ class StrNotStartsWith extends ValueFailure with DiagnosticableTreeMixin {
 $StrNotStartsWithCopyWith<StrNotStartsWith> get copyWith => _$StrNotStartsWithCopyWithImpl<StrNotStartsWith>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.strNotStartsWith'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message))..add(DiagnosticsProperty('prefix', prefix));
-}
 
 @override
 bool operator ==(Object other) {
@@ -1160,7 +1088,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message,prefix);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.strNotStartsWith(nameObject: $nameObject, message: $message, prefix: $prefix)';
 }
 
@@ -1204,7 +1132,7 @@ as String,
 /// @nodoc
 
 
-class NotANumber extends ValueFailure with DiagnosticableTreeMixin {
+class NotANumber extends ValueFailure {
   const NotANumber({this.nameObject = '', this.message = '', this.failedValue}): super._();
   
 
@@ -1220,12 +1148,6 @@ class NotANumber extends ValueFailure with DiagnosticableTreeMixin {
 $NotANumberCopyWith<NotANumber> get copyWith => _$NotANumberCopyWithImpl<NotANumber>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.notANumber'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message))..add(DiagnosticsProperty('failedValue', failedValue));
-}
 
 @override
 bool operator ==(Object other) {
@@ -1237,7 +1159,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message,failedValue);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.notANumber(nameObject: $nameObject, message: $message, failedValue: $failedValue)';
 }
 
@@ -1281,7 +1203,7 @@ as String?,
 /// @nodoc
 
 
-class NotAnInt extends ValueFailure with DiagnosticableTreeMixin {
+class NotAnInt extends ValueFailure {
   const NotAnInt({this.nameObject = '', this.message = '', this.failedValue}): super._();
   
 
@@ -1297,12 +1219,6 @@ class NotAnInt extends ValueFailure with DiagnosticableTreeMixin {
 $NotAnIntCopyWith<NotAnInt> get copyWith => _$NotAnIntCopyWithImpl<NotAnInt>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.notAnInt'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message))..add(DiagnosticsProperty('failedValue', failedValue));
-}
 
 @override
 bool operator ==(Object other) {
@@ -1314,7 +1230,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message,failedValue);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.notAnInt(nameObject: $nameObject, message: $message, failedValue: $failedValue)';
 }
 
@@ -1358,7 +1274,7 @@ as String?,
 /// @nodoc
 
 
-class NotADouble extends ValueFailure with DiagnosticableTreeMixin {
+class NotADouble extends ValueFailure {
   const NotADouble({this.nameObject = '', this.message = '', this.failedValue}): super._();
   
 
@@ -1374,12 +1290,6 @@ class NotADouble extends ValueFailure with DiagnosticableTreeMixin {
 $NotADoubleCopyWith<NotADouble> get copyWith => _$NotADoubleCopyWithImpl<NotADouble>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.notADouble'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message))..add(DiagnosticsProperty('failedValue', failedValue));
-}
 
 @override
 bool operator ==(Object other) {
@@ -1391,7 +1301,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message,failedValue);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.notADouble(nameObject: $nameObject, message: $message, failedValue: $failedValue)';
 }
 
@@ -1435,7 +1345,7 @@ as String?,
 /// @nodoc
 
 
-class NumOutRange extends ValueFailure with DiagnosticableTreeMixin {
+class NumOutRange extends ValueFailure {
   const NumOutRange({this.nameObject = '', this.message = '', this.failedValue, required this.min, required this.max}): super._();
   
 
@@ -1453,12 +1363,6 @@ class NumOutRange extends ValueFailure with DiagnosticableTreeMixin {
 $NumOutRangeCopyWith<NumOutRange> get copyWith => _$NumOutRangeCopyWithImpl<NumOutRange>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.numOutRange'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message))..add(DiagnosticsProperty('failedValue', failedValue))..add(DiagnosticsProperty('min', min))..add(DiagnosticsProperty('max', max));
-}
 
 @override
 bool operator ==(Object other) {
@@ -1470,7 +1374,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message,failedValue,min,max);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.numOutRange(nameObject: $nameObject, message: $message, failedValue: $failedValue, min: $min, max: $max)';
 }
 
@@ -1516,7 +1420,7 @@ as num,
 /// @nodoc
 
 
-class NumOutMax extends ValueFailure with DiagnosticableTreeMixin {
+class NumOutMax extends ValueFailure {
   const NumOutMax({this.nameObject = '', this.message = '', this.failedValue, required this.maxAllow}): super._();
   
 
@@ -1534,12 +1438,6 @@ class NumOutMax extends ValueFailure with DiagnosticableTreeMixin {
 $NumOutMaxCopyWith<NumOutMax> get copyWith => _$NumOutMaxCopyWithImpl<NumOutMax>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.numOutMax'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message))..add(DiagnosticsProperty('failedValue', failedValue))..add(DiagnosticsProperty('maxAllow', maxAllow));
-}
 
 @override
 bool operator ==(Object other) {
@@ -1551,7 +1449,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message,failedValue,maxAllow);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.numOutMax(nameObject: $nameObject, message: $message, failedValue: $failedValue, maxAllow: $maxAllow)';
 }
 
@@ -1596,7 +1494,7 @@ as num,
 /// @nodoc
 
 
-class NumOutMin extends ValueFailure with DiagnosticableTreeMixin {
+class NumOutMin extends ValueFailure {
   const NumOutMin({this.nameObject = '', this.message = '', this.failedValue, required this.minAllow}): super._();
   
 
@@ -1614,12 +1512,6 @@ class NumOutMin extends ValueFailure with DiagnosticableTreeMixin {
 $NumOutMinCopyWith<NumOutMin> get copyWith => _$NumOutMinCopyWithImpl<NumOutMin>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.numOutMin'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message))..add(DiagnosticsProperty('failedValue', failedValue))..add(DiagnosticsProperty('minAllow', minAllow));
-}
 
 @override
 bool operator ==(Object other) {
@@ -1631,7 +1523,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message,failedValue,minAllow);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.numOutMin(nameObject: $nameObject, message: $message, failedValue: $failedValue, minAllow: $minAllow)';
 }
 
@@ -1676,7 +1568,7 @@ as num,
 /// @nodoc
 
 
-class NegativeValue extends ValueFailure with DiagnosticableTreeMixin {
+class NegativeValue extends ValueFailure {
   const NegativeValue({this.nameObject = '', this.message = '', this.failedValue}): super._();
   
 
@@ -1692,12 +1584,6 @@ class NegativeValue extends ValueFailure with DiagnosticableTreeMixin {
 $NegativeValueCopyWith<NegativeValue> get copyWith => _$NegativeValueCopyWithImpl<NegativeValue>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.negativeValue'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message))..add(DiagnosticsProperty('failedValue', failedValue));
-}
 
 @override
 bool operator ==(Object other) {
@@ -1709,7 +1595,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message,failedValue);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.negativeValue(nameObject: $nameObject, message: $message, failedValue: $failedValue)';
 }
 
@@ -1753,7 +1639,7 @@ as num?,
 /// @nodoc
 
 
-class ValueExceedsLimit extends ValueFailure with DiagnosticableTreeMixin {
+class ValueExceedsLimit extends ValueFailure {
   const ValueExceedsLimit({this.nameObject = '', this.message = '', this.failedValue, required this.limit}): super._();
   
 
@@ -1770,12 +1656,6 @@ class ValueExceedsLimit extends ValueFailure with DiagnosticableTreeMixin {
 $ValueExceedsLimitCopyWith<ValueExceedsLimit> get copyWith => _$ValueExceedsLimitCopyWithImpl<ValueExceedsLimit>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.valueExceedsLimit'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message))..add(DiagnosticsProperty('failedValue', failedValue))..add(DiagnosticsProperty('limit', limit));
-}
 
 @override
 bool operator ==(Object other) {
@@ -1787,7 +1667,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message,failedValue,limit);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.valueExceedsLimit(nameObject: $nameObject, message: $message, failedValue: $failedValue, limit: $limit)';
 }
 
@@ -1832,7 +1712,7 @@ as num,
 /// @nodoc
 
 
-class DateOutRange extends ValueFailure with DiagnosticableTreeMixin {
+class DateOutRange extends ValueFailure {
   const DateOutRange({this.nameObject = '', this.message = '', required this.min, required this.max}): super._();
   
 
@@ -1849,12 +1729,6 @@ class DateOutRange extends ValueFailure with DiagnosticableTreeMixin {
 $DateOutRangeCopyWith<DateOutRange> get copyWith => _$DateOutRangeCopyWithImpl<DateOutRange>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.dateOutRange'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message))..add(DiagnosticsProperty('min', min))..add(DiagnosticsProperty('max', max));
-}
 
 @override
 bool operator ==(Object other) {
@@ -1866,7 +1740,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message,min,max);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.dateOutRange(nameObject: $nameObject, message: $message, min: $min, max: $max)';
 }
 
@@ -1911,7 +1785,7 @@ as DateTime,
 /// @nodoc
 
 
-class FutureDateNotAllowed extends ValueFailure with DiagnosticableTreeMixin {
+class FutureDateNotAllowed extends ValueFailure {
   const FutureDateNotAllowed({this.nameObject = '', this.message = '', this.failedValue}): super._();
   
 
@@ -1927,12 +1801,6 @@ class FutureDateNotAllowed extends ValueFailure with DiagnosticableTreeMixin {
 $FutureDateNotAllowedCopyWith<FutureDateNotAllowed> get copyWith => _$FutureDateNotAllowedCopyWithImpl<FutureDateNotAllowed>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.futureDateNotAllowed'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message))..add(DiagnosticsProperty('failedValue', failedValue));
-}
 
 @override
 bool operator ==(Object other) {
@@ -1944,7 +1812,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message,failedValue);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.futureDateNotAllowed(nameObject: $nameObject, message: $message, failedValue: $failedValue)';
 }
 
@@ -1988,7 +1856,7 @@ as DateTime?,
 /// @nodoc
 
 
-class DateTooOld extends ValueFailure with DiagnosticableTreeMixin {
+class DateTooOld extends ValueFailure {
   const DateTooOld({this.nameObject = '', this.message = '', this.failedValue, required this.maxAge}): super._();
   
 
@@ -2005,12 +1873,6 @@ class DateTooOld extends ValueFailure with DiagnosticableTreeMixin {
 $DateTooOldCopyWith<DateTooOld> get copyWith => _$DateTooOldCopyWithImpl<DateTooOld>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.dateTooOld'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message))..add(DiagnosticsProperty('failedValue', failedValue))..add(DiagnosticsProperty('maxAge', maxAge));
-}
 
 @override
 bool operator ==(Object other) {
@@ -2022,7 +1884,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message,failedValue,maxAge);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.dateTooOld(nameObject: $nameObject, message: $message, failedValue: $failedValue, maxAge: $maxAge)';
 }
 
@@ -2067,7 +1929,7 @@ as Duration,
 /// @nodoc
 
 
-class ItemEmpty extends ValueFailure with DiagnosticableTreeMixin {
+class ItemEmpty extends ValueFailure {
   const ItemEmpty({this.nameObject = '', this.message = ''}): super._();
   
 
@@ -2082,12 +1944,6 @@ class ItemEmpty extends ValueFailure with DiagnosticableTreeMixin {
 $ItemEmptyCopyWith<ItemEmpty> get copyWith => _$ItemEmptyCopyWithImpl<ItemEmpty>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.collEmpty'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message));
-}
 
 @override
 bool operator ==(Object other) {
@@ -2099,7 +1955,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.collEmpty(nameObject: $nameObject, message: $message)';
 }
 
@@ -2142,7 +1998,7 @@ as String,
 /// @nodoc
 
 
-class ItemRepeats extends ValueFailure with DiagnosticableTreeMixin {
+class ItemRepeats extends ValueFailure {
   const ItemRepeats({this.nameObject = '', this.message = ''}): super._();
   
 
@@ -2157,12 +2013,6 @@ class ItemRepeats extends ValueFailure with DiagnosticableTreeMixin {
 $ItemRepeatsCopyWith<ItemRepeats> get copyWith => _$ItemRepeatsCopyWithImpl<ItemRepeats>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.collRepeatItems'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message));
-}
 
 @override
 bool operator ==(Object other) {
@@ -2174,7 +2024,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.collRepeatItems(nameObject: $nameObject, message: $message)';
 }
 
@@ -2217,7 +2067,7 @@ as String,
 /// @nodoc
 
 
-class CollNotContains extends ValueFailure with DiagnosticableTreeMixin {
+class CollNotContains extends ValueFailure {
   const CollNotContains({this.nameObject = '', this.message = '', this.nameItem = ''}): super._();
   
 
@@ -2233,12 +2083,6 @@ class CollNotContains extends ValueFailure with DiagnosticableTreeMixin {
 $CollNotContainsCopyWith<CollNotContains> get copyWith => _$CollNotContainsCopyWithImpl<CollNotContains>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.collNotContains'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message))..add(DiagnosticsProperty('nameItem', nameItem));
-}
 
 @override
 bool operator ==(Object other) {
@@ -2250,7 +2094,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message,nameItem);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.collNotContains(nameObject: $nameObject, message: $message, nameItem: $nameItem)';
 }
 
@@ -2294,7 +2138,7 @@ as String,
 /// @nodoc
 
 
-class InsufficientStock extends ValueFailure with DiagnosticableTreeMixin {
+class InsufficientStock extends ValueFailure {
   const InsufficientStock({this.nameObject = '', this.message = '', required this.available, required this.requested}): super._();
   
 
@@ -2310,12 +2154,6 @@ class InsufficientStock extends ValueFailure with DiagnosticableTreeMixin {
 $InsufficientStockCopyWith<InsufficientStock> get copyWith => _$InsufficientStockCopyWithImpl<InsufficientStock>(this, _$identity);
 
 
-@override
-void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
-    ..add(DiagnosticsProperty('type', 'ValueFailure.insufficientStock'))
-    ..add(DiagnosticsProperty('nameObject', nameObject))..add(DiagnosticsProperty('message', message))..add(DiagnosticsProperty('available', available))..add(DiagnosticsProperty('requested', requested));
-}
 
 @override
 bool operator ==(Object other) {
@@ -2327,7 +2165,7 @@ bool operator ==(Object other) {
 int get hashCode => Object.hash(runtimeType,nameObject,message,available,requested);
 
 @override
-String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
+String toString() {
   return 'ValueFailure.insufficientStock(nameObject: $nameObject, message: $message, available: $available, requested: $requested)';
 }
 

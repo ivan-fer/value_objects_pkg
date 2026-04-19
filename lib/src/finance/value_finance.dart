@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:value_objects_pkg/src/core/value_failure.dart';
 import 'package:value_objects_pkg/src/core/value_object.dart';
@@ -18,14 +17,15 @@ enum CreditScoreCategory {
 }
 
 extension CreditScoreCategoryX on CreditScoreCategory {
-  /// Devuelve un color representativo para cada categoría.
-  Color get color => switch (this) {
-    CreditScoreCategory.poor => Colors.red,
-    CreditScoreCategory.fair => Colors.orange,
-    CreditScoreCategory.good => Colors.amber,
-    CreditScoreCategory.veryGood => Colors.lightGreen,
-    CreditScoreCategory.excellent => Colors.green,
-    CreditScoreCategory.invalid => Colors.grey,
+  /// Devuelve el valor ARGB (int) del color representativo para cada categoría.
+  /// En Flutter puedes usarlo como: Color(category.colorValue)
+  int get colorValue => switch (this) {
+    CreditScoreCategory.poor => 0xFFF44336, // Colors.red
+    CreditScoreCategory.fair => 0xFFFF9800, // Colors.orange
+    CreditScoreCategory.good => 0xFFFFC107, // Colors.amber
+    CreditScoreCategory.veryGood => 0xFF8BC34A, // Colors.lightGreen
+    CreditScoreCategory.excellent => 0xFF4CAF50, // Colors.green
+    CreditScoreCategory.invalid => 0xFF9E9E9E, // Colors.grey
   };
 
   /// Provee una recomendación de acción basada en la categoría.
@@ -57,12 +57,13 @@ enum DTICategory {
 }
 
 extension DTICategoryX on DTICategory {
-  /// Devuelve un color representativo para la categoría del DTI.
-  Color get color => switch (this) {
-    DTICategory.excellent => Colors.green,
-    DTICategory.good => Colors.lightGreen,
-    DTICategory.highRisk => Colors.red,
-    DTICategory.invalid => Colors.grey,
+  /// Devuelve el valor ARGB (int) del color representativo para la categoría del DTI.
+  /// En Flutter puedes usarlo como: Color(category.colorValue)
+  int get colorValue => switch (this) {
+    DTICategory.excellent => 0xFF4CAF50, // Colors.green
+    DTICategory.good => 0xFF8BC34A, // Colors.lightGreen
+    DTICategory.highRisk => 0xFFF44336, // Colors.red
+    DTICategory.invalid => 0xFF9E9E9E, // Colors.grey
   };
 }
 
