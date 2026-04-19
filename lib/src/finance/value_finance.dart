@@ -1,0 +1,442 @@
+import 'package:flutter/material.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:value_objects_pkg/src/core/value_failure.dart';
+import 'package:value_objects_pkg/src/core/value_object.dart';
+import 'package:value_objects_pkg/src/numbers/value_numbers.dart';
+
+/// Categorías estándar de puntaje de crédito (FICO).
+enum CreditScoreCategory {
+  poor('Poor'),
+  fair('Fair'),
+  good('Good'),
+  veryGood('Very Good'),
+  excellent('Excellent'),
+  invalid('Invalid');
+
+  final String label;
+  const CreditScoreCategory(this.label);
+}
+
+extension CreditScoreCategoryX on CreditScoreCategory {
+  /// Devuelve un color representativo para cada categoría.
+  Color get color => switch (this) {
+    CreditScoreCategory.poor => Colors.red,
+    CreditScoreCategory.fair => Colors.orange,
+    CreditScoreCategory.good => Colors.amber,
+    CreditScoreCategory.veryGood => Colors.lightGreen,
+    CreditScoreCategory.excellent => Colors.green,
+    CreditScoreCategory.invalid => Colors.grey,
+  };
+
+  /// Provee una recomendación de acción basada en la categoría.
+  String get recommendation => switch (this) {
+    CreditScoreCategory.poor =>
+      'Focus on improving your score before applying for a mortgage.',
+    CreditScoreCategory.fair =>
+      'You may qualify for some loans, but expect higher interest rates.',
+    CreditScoreCategory.good =>
+      'Good score. You will qualify for most conventional loans.',
+    CreditScoreCategory.veryGood =>
+      'Very good score. You can expect favorable mortgage terms.',
+    CreditScoreCategory.excellent =>
+      'Excellent! You qualify for the best available interest rates.',
+    CreditScoreCategory.invalid =>
+      'Please enter a valid credit score to see recommendations.',
+  };
+}
+
+/// Categorías de salud financiera para el Debt-to-Income ratio (DTI).
+enum DTICategory {
+  excellent('Excellent'),
+  good('Good'),
+  highRisk('High Risk'),
+  invalid('Invalid');
+
+  final String label;
+  const DTICategory(this.label);
+}
+
+extension DTICategoryX on DTICategory {
+  /// Devuelve un color representativo para la categoría del DTI.
+  Color get color => switch (this) {
+    DTICategory.excellent => Colors.green,
+    DTICategory.good => Colors.lightGreen,
+    DTICategory.highRisk => Colors.red,
+    DTICategory.invalid => Colors.grey,
+  };
+}
+
+/// Representa una tasa de interés (ej. 7.5%).
+/// Generalmente restringida entre 0 y 100 para préstamos hipotecarios.
+class ValueInterestRate extends ValueObject<double> {
+  @override
+  final Either<ValueFailure, double> value;
+
+  factory ValueInterestRate(String input, {double max = 100.0}) {
+    final result = parseNumeric<double>(
+      input,
+    ).flatMap((v) => validateMin(v, 0.0)).flatMap((v) => validateMax(v, max));
+    return ValueInterestRate._(result);
+  }
+
+  const ValueInterestRate._(this.value);
+
+  /// Devuelve el valor decimal para cálculos (ej. 5.0 -> 0.05).
+  double get asFraction => value.getOrElse((_) => 0.0) / 100;
+
+  @override
+  String? validate() => value.failureMessage;
+}
+
+/// Representa un puntaje de crédito (Credit Score).
+/// El rango estándar (FICO) es de 300 a 850.
+class ValueCreditScore extends ValueObject<int> {
+  @override
+  final Either<ValueFailure, int> value;
+
+  factory ValueCreditScore(String input) {
+    final result = parseNumeric<int>(
+      input,
+    ).flatMap((v) => validateMin(v, 300)).flatMap((v) => validateMax(v, 850));
+    return ValueCreditScore._(result);
+  }
+
+  const ValueCreditScore._(this.value);
+
+  /// Retorna la categoría del puntaje basado en los rangos estándar de FICO.
+  CreditScoreCategory get category {
+    return value.fold((_) => CreditScoreCategory.invalid, (score) {
+      if (score >= 800) return CreditScoreCategory.excellent;
+      if (score >= 740) return CreditScoreCategory.veryGood;
+      if (score >= 670) return CreditScoreCategory.good;
+      if (score >= 580) return CreditScoreCategory.fair;
+      return CreditScoreCategory.poor;
+    });
+  }
+
+  /// Shortcut para obtener la recomendación basada en la categoría actual.
+  String get recommendation => category.recommendation;
+
+  @override
+  String? validate() => value.failureMessage;
+}
+
+/// Gestiona montos monetarios vinculados a una moneda específica.
+/// El estado interno es un Record que guarda el monto y el símbolo/código.
+class ValueMoney extends ValueObject<(double, String)>
+    implements Comparable<ValueMoney> {
+  @override
+  final Either<ValueFailure, (double, String)> value;
+
+  factory ValueMoney(
+    String input, {
+    String symbol = '\$',
+    double min = 0.0,
+    double? max,
+  }) {
+    final result = parseNumeric<double>(input)
+        .flatMap((v) => validateMin(v, min))
+        .flatMap((v) => max != null ? validateMax(v, max) : right(v));
+    return ValueMoney._(result.map((amount) => (amount, symbol)));
+  }
+
+  const ValueMoney._(this.value);
+
+  /// Crea un objeto con valor cero.
+  factory ValueMoney.zero({String symbol = '\$'}) =>
+      ValueMoney._(right((0.0, symbol)));
+
+  /// Helpers para acceder a los datos del Record.
+  double get amount => value.getOrElse((_) => (0.0, '')).$1;
+  String get symbol => value.getOrElse((_) => (0.0, '')).$2;
+
+  /// Suma una lista de [ValueMoney].
+  ///
+  /// Si la lista está vacía, devuelve cero con el [defaultSymbol].
+  /// Si hay discrepancia de monedas o valores inválidos en la lista,
+  /// el resultado contendrá el primer fallo encontrado.
+  static ValueMoney sum(List<ValueMoney> items, {String defaultSymbol = '\$'}) {
+    if (items.isEmpty) return ValueMoney.zero(symbol: defaultSymbol);
+
+    return items.reduce((acc, item) => acc + item);
+  }
+
+  /// Calcula el promedio de una lista de [ValueMoney].
+  ///
+  /// Si la lista está vacía, devuelve cero.
+  /// Si hay fallos en la lista o discrepancia de monedas, devuelve el fallo.
+  static ValueMoney avg(List<ValueMoney> items, {String defaultSymbol = '\$'}) {
+    if (items.isEmpty) return ValueMoney.zero(symbol: defaultSymbol);
+
+    final total = sum(items, defaultSymbol: defaultSymbol);
+    return total * (1 / items.length);
+  }
+
+  /// Suma dos montos de dinero validando que tengan el mismo símbolo.
+  /// Si los símbolos no coinciden o alguno de los valores es inválido,
+  /// retorna un [ValueMoney] con el fallo correspondiente.
+  ValueMoney operator +(ValueMoney other) {
+    return ValueMoney._(
+      value.flatMap(
+        (v1) => other.value.flatMap((v2) {
+          if (v1.$2 != v2.$2) {
+            return left(
+              ValueFailure.invalid(
+                message: 'Currency mismatch: cannot add ${v1.$2} and ${v2.$2}',
+              ),
+            );
+          }
+          return right((v1.$1 + v2.$1, v1.$2));
+        }),
+      ),
+    );
+  }
+
+  /// Resta dos montos de dinero validando el símbolo.
+  /// Por defecto permite resultados negativos.
+  ValueMoney operator -(ValueMoney other) =>
+      subtract(other, allowNegative: true);
+
+  /// Resta dos montos de dinero con control opcional sobre resultados negativos.
+  /// Si [allowNegative] es false y el resultado es menor a 0, retorna un [ValueFailure.numOutMin].
+  ValueMoney subtract(ValueMoney other, {bool allowNegative = true}) {
+    return ValueMoney._(
+      value.flatMap(
+        (v1) => other.value.flatMap((v2) {
+          if (v1.$2 != v2.$2) {
+            return left(
+              ValueFailure.invalid(
+                message:
+                    'Currency mismatch: cannot subtract ${v2.$2} from ${v1.$2}',
+              ),
+            );
+          }
+          final result = v1.$1 - v2.$1;
+          if (!allowNegative && result < 0) {
+            return left(
+              ValueFailure.numOutMin(failedValue: result, minAllow: 0),
+            );
+          }
+          return right((result, v1.$2));
+        }),
+      ),
+    );
+  }
+
+  /// Multiplica el monto por un [ValuePercentage].
+  /// Útil para calcular comisiones, impuestos o participaciones.
+  ///
+  /// Si el porcentaje o el dinero son inválidos, el resultado hereda el fallo.
+  ValueMoney multiplyByPercentage(ValuePercentage percentage) {
+    return ValueMoney._(
+      value.flatMap(
+        (m) => percentage.value.map((p) => (m.$1 * (p / 100), m.$2)),
+      ),
+    );
+  }
+
+  /// Multiplica el monto por un factor numérico simple.
+  ValueMoney operator *(num factor) {
+    return ValueMoney._(value.map((v) => (v.$1 * factor, v.$2)));
+  }
+
+  /// Compara si este monto es mayor que otro.
+  /// Retorna false si las monedas no coinciden o si alguno es inválido.
+  bool operator >(ValueMoney other) => _compare(other, (a, b) => a > b);
+
+  /// Compara si este monto es mayor o igual que otro.
+  bool operator >=(ValueMoney other) => _compare(other, (a, b) => a >= b);
+
+  /// Compara si este monto es menor que otro.
+  bool operator <(ValueMoney other) => _compare(other, (a, b) => a < b);
+
+  /// Compara si este monto es menor o igual que otro.
+  bool operator <=(ValueMoney other) => _compare(other, (a, b) => a <= b);
+
+  /// Helper privado para centralizar la lógica de comparación.
+  /// Valida que ambos valores sean válidos y que los símbolos de moneda coincidan.
+  bool _compare(ValueMoney other, bool Function(double a, double b) op) {
+    return value.fold(
+      (_) => false,
+      (v1) => other.value.fold(
+        (_) => false,
+        (v2) => v1.$2 == v2.$2 && op(v1.$1, v2.$1),
+      ),
+    );
+  }
+
+  @override
+  int compareTo(ValueMoney other) {
+    return value.fold(
+      // Si este es inválido, lo ponemos al principio (-1) si el otro es válido
+      (f1) => other.value.isLeft() ? 0 : -1,
+      (v1) => other.value.fold(
+        // Si el otro es inválido, este (que es válido) va después (1)
+        (f2) => 1,
+        (v2) {
+          // 1. Comparar símbolos de moneda para agruparlos
+          final symbolComp = v1.$2.compareTo(v2.$2);
+          if (symbolComp != 0) return symbolComp;
+          // 2. Si es la misma moneda, comparar montos
+          return v1.$1.compareTo(v2.$1);
+        },
+      ),
+    );
+  }
+
+  @override
+  String? validate() => value.failureMessage;
+
+  @override
+  String toString() => value.fold(
+    (f) => 'Invalid Money: $f',
+    (r) => '${r.$2}${r.$1.toStringAsFixed(2)}',
+  );
+}
+
+// Crear un ValueOptionMoney para campos opcionales de dinero en AcquisitionCosts.
+class ValueOptionMoney extends ValueObject<Option<ValueMoney>> {
+  @override
+  final Either<ValueFailure, Option<ValueMoney>> value;
+
+  factory ValueOptionMoney(String? input, {String symbol = '\$'}) {
+    if (input == null || input.trim().isEmpty) {
+      return ValueOptionMoney.none();
+    }
+    final money = ValueMoney(input, symbol: symbol);
+    return ValueOptionMoney._(money.value.map((m) => some(money)));
+  }
+
+  factory ValueOptionMoney.none() {
+    return ValueOptionMoney._(right(none()));
+  }
+
+  const ValueOptionMoney._(this.value);
+
+  double get amount => value.fold(
+    (f) => 0.0,
+    (option) => option.getOrElse(() => ValueMoney.zero()).amount,
+  );
+  String get symbol => value.fold(
+    (f) => '\$',
+    (option) => option.getOrElse(() => ValueMoney.zero()).symbol,
+  );
+
+  @override
+  String? validate() => value.failureMessage;
+}
+
+extension ValueMoneyIterableX on Iterable<ValueMoney> {
+  /// Filtra los montos que coinciden con el símbolo de moneda especificado.
+  Iterable<ValueMoney> whereCurrency(String symbol) =>
+      where((m) => m.symbol == symbol);
+
+  /// Calcula la suma de todos los montos en la colección.
+  ValueMoney sum({String defaultSymbol = '\$'}) =>
+      ValueMoney.sum(toList(), defaultSymbol: defaultSymbol);
+
+  /// Calcula el promedio de los montos en la colección.
+  ValueMoney avg({String defaultSymbol = '\$'}) =>
+      ValueMoney.avg(toList(), defaultSymbol: defaultSymbol);
+
+  /// Devuelve el monto máximo de la colección basado en el orden de [compareTo].
+  /// (Agrupa por símbolo de moneda y luego por monto).
+  ValueMoney maxAmount({String defaultSymbol = '\$'}) {
+    if (isEmpty) return ValueMoney.zero(symbol: defaultSymbol);
+    return reduce((a, b) => a.compareTo(b) >= 0 ? a : b);
+  }
+
+  /// Devuelve el monto mínimo de la colección basado en el orden de [compareTo].
+  ValueMoney minAmount({String defaultSymbol = '\$'}) {
+    if (isEmpty) return ValueMoney.zero(symbol: defaultSymbol);
+    return reduce((a, b) => a.compareTo(b) <= 0 ? a : b);
+  }
+}
+
+/// Representa el Retorno de Inversión (ROI).
+/// A diferencia de InterestRate, el ROI puede ser negativo (pérdidas).
+class ValueROI extends ValueObject<double> {
+  @override
+  final Either<ValueFailure, double> value;
+
+  factory ValueROI(String input) {
+    // No ponemos límite superior ni inferior estricto,
+    // solo validamos que sea un número.
+    return ValueROI._(parseNumeric<double>(input));
+  }
+
+  const ValueROI._(this.value);
+
+  @override
+  String? validate() => value.failureMessage;
+}
+
+/// Representa la relación Deuda-Ingreso (Debt-to-Income ratio).
+class ValueDTI extends ValueObject<double> {
+  @override
+  final Either<ValueFailure, double> value;
+
+  factory ValueDTI(String input) {
+    // El DTI es un porcentaje. Aunque usualmente es < 100, técnicamente
+    // puede ser mayor si la deuda supera al ingreso. Validamos min 0.
+    final result = parseNumeric<double>(
+      input,
+    ).flatMap((v) => validateMin(v, 0.0));
+    return ValueDTI._(result);
+  }
+
+  /// Calcula el DTI a partir de la deuda mensual total y el ingreso bruto mensual.
+  ///
+  /// DTI = (Deuda Total Mensual / Ingreso Bruto Mensual) * 100
+  factory ValueDTI.calculate(ValueMoney totalDebt, ValueMoney grossIncome) {
+    return ValueDTI._(
+      totalDebt.value.flatMap(
+        (debt) => grossIncome.value.flatMap((income) {
+          if (income.$1 <= 0) {
+            return left(
+              const ValueFailure.invalid(
+                message:
+                    'Gross income must be greater than zero to calculate DTI',
+              ),
+            );
+          }
+          if (debt.$2 != income.$2) {
+            return left(
+              ValueFailure.invalid(
+                message:
+                    'Currency mismatch: debt (${debt.$2}) and income (${income.$2})',
+              ),
+            );
+          }
+          return right((debt.$1 / income.$1) * 100);
+        }),
+      ),
+    );
+  }
+
+  const ValueDTI._(this.value);
+
+  /// Devuelve el valor decimal para cálculos (ej. 36.0 -> 0.36).
+  double get asFraction => value.getOrElse((_) => 0.0) / 100;
+
+  /// Indica si el ratio es excelente (<= 36%).
+  bool get isExcellent => value.getOrElse((_) => 100.0) <= 36.0;
+
+  /// Indica si el ratio es aceptable para la mayoría de prestamistas (<= 43%).
+  bool get isAcceptable => value.getOrElse((_) => 100.0) <= 43.0;
+
+  /// Retorna la categoría del DTI basada en estándares de la industria crediticia.
+  DTICategory get category {
+    return value.fold((_) => DTICategory.invalid, (ratio) {
+      if (ratio <= 36.0) return DTICategory.excellent;
+      if (ratio <= 43.0) return DTICategory.good;
+      return DTICategory.highRisk;
+    });
+  }
+
+  /// Retorna el mensaje de estado descriptivo (ej: "High Risk", "Good").
+  String get statusMessage => category.label;
+
+  @override
+  String? validate() => value.failureMessage;
+}
