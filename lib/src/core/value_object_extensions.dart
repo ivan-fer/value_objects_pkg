@@ -28,6 +28,9 @@ extension ValueObjectOptionExt<C> on ValueObject<Option<C>> {
 
   /// Returns `true` if the value is `None`
   bool isNone() => value.fold((f) => false, (r) => r.isNone());
+
+  /// Returns `true` if the value is `Some` (exists and is valid)
+  bool isSome() => value.fold((f) => false, (r) => r.isSome());
 }
 
 extension ValueObjectStringExt on ValueObject<String> {
@@ -36,6 +39,9 @@ extension ValueObjectStringExt on ValueObject<String> {
 }
 
 extension ValueObjectDoubleExt on ValueObject<double> {
+  /// return the double value or 0.0 if is a failure
+  double get orZero => value.getOrElse((f) => 0.0);
+
   String formatCurrency({String locale = 'en_US', String symbol = '\$'}) {
     final number = value.getOrElse((f) => 0.0);
     return NumberFormat.currency(locale: locale, symbol: symbol).format(number);
@@ -46,4 +52,29 @@ extension ValueObjectOptionStringExt on ValueObject<Option<String>> {
   /// return the string value or empty string if is none or failure
   String get orEmpty =>
       value.fold((f) => '', (r) => r.fold(() => '', (s) => s));
+}
+
+extension ValueObjectIntExt on ValueObject<int> {
+  /// return the int value or 0 if is a failure
+  int get orZero => value.getOrElse((f) => 0);
+}
+
+extension ValueObjectNumExt on ValueObject<num> {
+  /// return the numeric value or 0 if is a failure
+  num get orZero => value.getOrElse((f) => 0);
+}
+
+extension ValueObjectOptionDoubleExt on ValueObject<Option<double>> {
+  /// return the double value or 0.0 if is none or failure
+  double get orZero => value.fold((f) => 0.0, (r) => r.getOrElse(() => 0.0));
+}
+
+extension ValueObjectOptionIntExt on ValueObject<Option<int>> {
+  /// return the int value or 0 if is none or failure
+  int get orZero => value.fold((f) => 0, (r) => r.getOrElse(() => 0));
+}
+
+extension ValueObjectOptionNumExt on ValueObject<Option<num>> {
+  /// return the numeric value or 0 if is none or failure
+  num get orZero => value.fold((f) => 0, (r) => r.getOrElse(() => 0));
 }
