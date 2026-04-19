@@ -51,10 +51,6 @@ Either<ValueFailure, Uri> validateUrlFormat(String input) {
     return right(uri);
   }
 
-  if (!uri.isAbsolute && uri.path.isNotEmpty) {
-    return right(uri);
-  }
-
   return left(
     const ValueFailure.strInvalidChars(
       nameObject: 'URL',
