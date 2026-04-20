@@ -35,7 +35,7 @@ class UniqueId extends ValueObject<String> {
 /// Gestiona nombres de personas. Valida caracteres alfabéticos y acentos.
 class ValueName extends ValueText {
   factory ValueName(String input) {
-    return ValueName._(validatePersonalName(input));
+    return ValueName._(_validatePersonalName(input));
   }
 
   const ValueName._(super.value);
@@ -44,7 +44,7 @@ class ValueName extends ValueText {
 /// Gestiona apellidos de personas. Usa la misma lógica que [ValueName].
 class ValueLastName extends ValueText {
   factory ValueLastName(String input) {
-    return ValueLastName._(validatePersonalName(input));
+    return ValueLastName._(_validatePersonalName(input));
   }
 
   const ValueLastName._(super.value);
@@ -60,7 +60,7 @@ class ValueEmailAddress extends ValueText {
 
   static Either<ValueFailure, String> _validateEmail(String input) {
     const emailRegex =
-        r"""^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+""";
+        r"""^[a-zA-Z0-9.!*+\-/=?^_`{|}~]+@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*\.[a-zA-Z]{2,}$""";
     if (RegExp(emailRegex).hasMatch(input)) {
       return right(input);
     } else {
@@ -76,7 +76,7 @@ class ValueEmailAddress extends ValueText {
 /// - Al menos una mayúscula, una minúscula, un número y un carácter especial.
 class ValuePassword extends ValueText {
   factory ValuePassword(String input) {
-    return ValuePassword._(validatePassword(input));
+    return ValuePassword._(_validatePassword(input));
   }
 
   const ValuePassword._(super.value);
@@ -125,4 +125,37 @@ class ValueOptionEmailAddress extends ValueOptionText {
     );
   }
   const ValueOptionEmailAddress._(super.value);
+}
+
+// ---------------------------------------------------------------------------
+// Funciones de Validación Privadas
+// ---------------------------------------------------------------------------
+
+/// Valida nombres personales: solo letras, acentos, espacios y guiones.
+/// Rechaza strings vacíos o que solo contienen espacios.
+Either<ValueFailure, String> _validatePersonalName(String input) {
+  // Rechaza si está vacío o solo espacios
+  if (input.isEmpty || input.trim().isEmpty) {
+    return left(const ValueFailure.strEmpty());
+  }
+
+  // Usa la validación de value_text.dart
+  return validatePersonalName(input);
+}
+
+/// Valida contraseñas con requisitos de complejidad (8-64 caracteres).
+Either<ValueFailure, String> _validatePassword(String input) {
+  // Rechaza si está fuera del rango 8-64
+  if (input.length < 8 || input.length > 64) {
+    return left(
+      ValueFailure.strOutRange(
+        min: 8,
+        max: 64,
+        message: 'Password must be between 8 and 64 characters',
+      ),
+    );
+  }
+
+  // Usa la validación de value_text.dart
+  return validatePassword(input);
 }
