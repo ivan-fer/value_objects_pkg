@@ -2,6 +2,7 @@ export 'package:value_objects_pkg/src/collections/value_collections.dart';
 export 'package:value_objects_pkg/src/core/value_enum.dart';
 export 'package:value_objects_pkg/src/core/value_failure.dart';
 export 'package:value_objects_pkg/src/finance/value_finance.dart';
+export 'package:value_objects_pkg/src/geo/value_geo.dart';
 export 'package:value_objects_pkg/src/identity/value_identities.dart';
 export 'package:value_objects_pkg/src/measures/value_measures.dart';
 export 'package:value_objects_pkg/src/numbers/value_numbers.dart';

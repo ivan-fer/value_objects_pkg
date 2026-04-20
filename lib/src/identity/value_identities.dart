@@ -96,6 +96,15 @@ class ValuePasswordConfirm extends ValueText {
   const ValuePasswordConfirm._(super.value);
 }
 
+/// Valida un número de teléfono con formato internacional básico.
+class ValuePhoneNumber extends ValueText {
+  factory ValuePhoneNumber(String input) {
+    return ValuePhoneNumber._(_validatePhoneNumber(input));
+  }
+
+  const ValuePhoneNumber._(super.value);
+}
+
 // ---------------------------------------------------------------------------
 // Versiones Opcionales
 // ---------------------------------------------------------------------------
@@ -125,6 +134,15 @@ class ValueOptionEmailAddress extends ValueOptionText {
     );
   }
   const ValueOptionEmailAddress._(super.value);
+}
+
+class ValueOptionPhoneNumber extends ValueOptionText {
+  factory ValueOptionPhoneNumber(String? input) {
+    return ValueOptionPhoneNumber._(
+      ValueOptionText.validator(input, (s) => ValuePhoneNumber(s)),
+    );
+  }
+  const ValueOptionPhoneNumber._(super.value);
 }
 
 // ---------------------------------------------------------------------------
@@ -158,4 +176,22 @@ Either<ValueFailure, String> _validatePassword(String input) {
 
   // Usa la validación de value_text.dart
   return validatePassword(input);
+}
+
+/// Valida números de teléfono (acepta '+' opcional al inicio, seguido de 7 a 15 dígitos).
+Either<ValueFailure, String> _validatePhoneNumber(String input) {
+  final phoneRegex = RegExp(r"^\+?[0-9]{7,15}$");
+  final trimmed = input.trim().replaceAll(
+    ' ',
+    '',
+  ); // quitamos espacios visuales
+  if (!phoneRegex.hasMatch(trimmed)) {
+    return left(
+      const ValueFailure.strInvalidChars(
+        nameObject: 'Phone Number',
+        message: 'Invalid phone format',
+      ),
+    );
+  }
+  return right(trimmed);
 }
