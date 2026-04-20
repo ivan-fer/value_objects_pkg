@@ -1,6 +1,6 @@
 name: value_objects_pkg
-description: "A new Flutter package project."
-version: 0.0.1
+description: "A robust Domain-Driven Design (DDD) and Functional Programming value objects package for Flutter and Dart."
+version: 1.0.0
 homepage:
 
 environment:

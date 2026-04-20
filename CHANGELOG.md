@@ -1,3 +1,6 @@
-## 0.0.1
+## 1.0.0
 
-* TODO: Describe initial release.
+* Initial release.
+* Added Text, Identity, Numbers, Finance, Property, Measures, Geo and Collections value objects.
+* Implemented completely functional architecture using fpdart (Either, Option).
+* Added comprehensive validation top-level functions.
