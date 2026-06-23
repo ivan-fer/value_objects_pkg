@@ -75,6 +75,37 @@ final mensaje = age.value.fold(
 );
 ```
 
+### Validación Personalizada (`customValidate`)
+
+Todos los Value Objects aceptan un parámetro opcional `customValidate` para
+inyectar una **regla de negocio propia** además de la validación estructural
+incluida, sin necesidad de crear una subclase.
+
+Recibe el `Either<ValueFailure, T>` del objeto y devuelve un mensaje de error
+(si la regla falla) o `null` (si pasa). Se ejecuta **antes** que la validación
+interna en `validate()`:
+
+```dart
+final tags = ValueListNotEmpty<String>(
+  inputTags,
+  customValidate: (either) => either.fold(
+    (failure) => null, // deja hablar al fallo estructural
+    (list) => list.contains('banned') ? 'Tag "banned" not allowed' : null,
+  ),
+);
+
+tags.validate(); // ejecuta la regla personalizada primero, luego la interna
+
+// También funciona en value objects opcionales (recibes el Option):
+final required = ValueOptionListNotEmpty<int>(
+  null,
+  customValidate: (either) => either.fold(
+    (_) => null,
+    (option) => option.isNone() ? 'A value is required' : null,
+  ),
+);
+```
+
 ---
 
 ## 📱 Integración con Flutter (Formularios)
@@ -195,7 +226,7 @@ class ValueProductCode extends ValueNumeric<int> {
 
 ## 🛠 Testing
 
-Gracias a su naturaleza puramente funcional y sin dependencias de estado ocultas, testear estos Value Objects es extremadamente sencillo usando `flutter_test`:
+Gracias a su naturaleza puramente funcional y sin dependencias de estado ocultas, testear estos Value Objects es extremadamente sencillo usando `package:test`:
 
 ```dart
 test('ValueEmailAddress detects invalid emails', () {

@@ -167,10 +167,10 @@ abstract class ValueText extends ValueObject<String> {
   @override
   final Either<ValueFailure, String> value;
 
-  const ValueText(this.value);
-
   @override
-  String? validate() => value.failureMessage;
+  final CustomValidate<String>? customValidate;
+
+  const ValueText(this.value, {this.customValidate});
 }
 
 // ---------------------------------------------------------------------------
@@ -181,28 +181,40 @@ abstract class ValueText extends ValueObject<String> {
 class ValueSingleLine extends ValueText {
   final int max;
 
-  factory ValueSingleLine(String input, {int max = 125}) {
+  factory ValueSingleLine(
+    String input, {
+    int max = 125,
+    CustomValidate<String>? customValidate,
+  }) {
     final result = validateNotEmpty(
       input,
     ).flatMap((s) => validateMaxLength(s, max)).flatMap(validateSingleLine);
-    return ValueSingleLine._(result, max: max);
+    return ValueSingleLine._(result, max: max, customValidate: customValidate);
   }
 
-  const ValueSingleLine._(super.value, {this.max = 125});
+  const ValueSingleLine._(super.value, {this.max = 125, super.customValidate});
 }
 
 /// Manage a text that can have multiple lines, non empty & with a max length
 class ValueMultipleLine extends ValueText {
   final int max;
 
-  factory ValueMultipleLine(String input, {int max = 600}) {
+  factory ValueMultipleLine(
+    String input, {
+    int max = 600,
+    CustomValidate<String>? customValidate,
+  }) {
     final result = validateNotEmpty(
       input,
     ).flatMap((s) => validateMaxLength(s, max));
-    return ValueMultipleLine._(result, max: max);
+    return ValueMultipleLine._(
+      result,
+      max: max,
+      customValidate: customValidate,
+    );
   }
 
-  const ValueMultipleLine._(super.value, {this.max = 600});
+  const ValueMultipleLine._(super.value, {this.max = 600, super.customValidate});
 }
 
 // ---------------------------------------------------------------------------
@@ -215,10 +227,10 @@ abstract class ValueOptionText<T extends ValueText>
   @override
   final Either<ValueFailure, Option<String>> value;
 
-  const ValueOptionText(this.value);
-
   @override
-  String? validate() => value.failureMessage;
+  final CustomValidate<Option<String>>? customValidate;
+
+  const ValueOptionText(this.value, {this.customValidate});
 
   static Either<ValueFailure, Option<String>> validator<T extends ValueText>(
     String? input,
@@ -231,22 +243,32 @@ abstract class ValueOptionText<T extends ValueText>
 
 /// Manage an optional text. If exist, it behave as a [ValueSingleLine]
 class ValueOptionSingleLine extends ValueOptionText {
-  factory ValueOptionSingleLine(String? input, {int max = 125}) {
+  factory ValueOptionSingleLine(
+    String? input, {
+    int max = 125,
+    CustomValidate<Option<String>>? customValidate,
+  }) {
     return ValueOptionSingleLine._(
       ValueOptionText.validator(input, (s) => ValueSingleLine(s, max: max)),
+      customValidate: customValidate,
     );
   }
-  const ValueOptionSingleLine._(super.value);
+  const ValueOptionSingleLine._(super.value, {super.customValidate});
 }
 
 /// Manage an optional text. If exist, it behave as a [ValueMultipleLine]
 class ValueOptionMultipleLine extends ValueOptionText {
-  factory ValueOptionMultipleLine(String? input, {int max = 600}) {
+  factory ValueOptionMultipleLine(
+    String? input, {
+    int max = 600,
+    CustomValidate<Option<String>>? customValidate,
+  }) {
     return ValueOptionMultipleLine._(
       ValueOptionText.validator(input, (s) => ValueMultipleLine(s, max: max)),
+      customValidate: customValidate,
     );
   }
-  const ValueOptionMultipleLine._(super.value);
+  const ValueOptionMultipleLine._(super.value, {super.customValidate});
 }
 
 // ---------------------------------------------------------------------------
@@ -259,36 +281,42 @@ class ValueUrl extends ValueObject<Uri> {
   @override
   final Either<ValueFailure, Uri> value;
 
-  factory ValueUrl(String input) {
+  @override
+  final CustomValidate<Uri>? customValidate;
+
+  factory ValueUrl(String input, {CustomValidate<Uri>? customValidate}) {
     final result = validateNotEmpty(input).flatMap(validateUrlFormat);
-    return ValueUrl._(result);
+    return ValueUrl._(result, customValidate: customValidate);
   }
 
-  const ValueUrl._(this.value);
-
-  @override
-  String? validate() => value.failureMessage;
+  const ValueUrl._(this.value, {this.customValidate});
 }
 
 class ValueOptionUrl extends ValueObject<Option<Uri>> {
   @override
   final Either<ValueFailure, Option<Uri>> value;
 
-  factory ValueOptionUrl(String? input) {
+  @override
+  final CustomValidate<Option<Uri>>? customValidate;
+
+  factory ValueOptionUrl(
+    String? input, {
+    CustomValidate<Option<Uri>>? customValidate,
+  }) {
     if (input == null || input.trim().isEmpty) {
-      return ValueOptionUrl._(right(none()));
+      return ValueOptionUrl._(right(none()), customValidate: customValidate);
     }
-    return ValueOptionUrl._(ValueUrl(input).value.map(some));
+    return ValueOptionUrl._(
+      ValueUrl(input).value.map(some),
+      customValidate: customValidate,
+    );
   }
 
-  const ValueOptionUrl._(this.value);
+  const ValueOptionUrl._(this.value, {this.customValidate});
 
   /// return the string value or empty string if is none or failure
   String get orEmpty => value.fold(
     (f) => '',
     (r) => r.fold(() => '', (s) => s.isAbsolute ? s.toString() : s.path),
   );
-
-  @override
-  String? validate() => value.failureMessage;
 }

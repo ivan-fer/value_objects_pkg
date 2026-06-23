@@ -36,15 +36,18 @@ class ValueLatitude extends ValueObject<double> {
   @override
   final Either<ValueFailure, double> value;
 
-  factory ValueLatitude(String input) {
+  @override
+  final CustomValidate<double>? customValidate;
+
+  factory ValueLatitude(
+    String input, {
+    CustomValidate<double>? customValidate,
+  }) {
     final result = parseNumeric<double>(input).flatMap(validateLatitude);
-    return ValueLatitude._(result);
+    return ValueLatitude._(result, customValidate: customValidate);
   }
 
-  const ValueLatitude._(this.value);
-
-  @override
-  String? validate() => value.failureMessage;
+  const ValueLatitude._(this.value, {this.customValidate});
 }
 
 /// Representa la Longitud geográfica (-180.0 a 180.0).
@@ -52,13 +55,16 @@ class ValueLongitude extends ValueObject<double> {
   @override
   final Either<ValueFailure, double> value;
 
-  factory ValueLongitude(String input) {
+  @override
+  final CustomValidate<double>? customValidate;
+
+  factory ValueLongitude(
+    String input, {
+    CustomValidate<double>? customValidate,
+  }) {
     final result = parseNumeric<double>(input).flatMap(validateLongitude);
-    return ValueLongitude._(result);
+    return ValueLongitude._(result, customValidate: customValidate);
   }
 
-  const ValueLongitude._(this.value);
-
-  @override
-  String? validate() => value.failureMessage;
+  const ValueLongitude._(this.value, {this.customValidate});
 }

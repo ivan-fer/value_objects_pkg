@@ -93,10 +93,10 @@ abstract class ValueList<T> extends ValueObject<List<T>> {
   @override
   final Either<ValueFailure, List<T>> value;
 
-  const ValueList(this.value);
-
   @override
-  String? validate() => value.failureMessage;
+  final CustomValidate<List<T>>? customValidate;
+
+  const ValueList(this.value, {this.customValidate});
 
   /// Returns the valid list, or an empty list when the object is invalid.
   List<T> get orEmpty => value.getOrElse((_) => <T>[]);
@@ -107,10 +107,10 @@ abstract class ValueOptionList<T> extends ValueObject<Option<List<T>>> {
   @override
   final Either<ValueFailure, Option<List<T>>> value;
 
-  const ValueOptionList(this.value);
-
   @override
-  String? validate() => value.failureMessage;
+  final CustomValidate<Option<List<T>>>? customValidate;
+
+  const ValueOptionList(this.value, {this.customValidate});
 
   /// Returns the valid list, or an empty list when the object is invalid
   /// or absent (`none`).
@@ -123,75 +123,103 @@ abstract class ValueOptionList<T> extends ValueObject<Option<List<T>>> {
 
 /// A list guaranteed to hold at least one element.
 class ValueListNotEmpty<T> extends ValueList<T> {
-  factory ValueListNotEmpty(List<T> input) {
+  factory ValueListNotEmpty(
+    List<T> input, {
+    CustomValidate<List<T>>? customValidate,
+  }) {
     final result = validateCollectionNotEmpty(input);
-    return ValueListNotEmpty._(result);
+    return ValueListNotEmpty._(result, customValidate: customValidate);
   }
 
-  const ValueListNotEmpty._(super.value);
+  const ValueListNotEmpty._(super.value, {super.customValidate});
 }
 
 /// A list guaranteed to have all unique elements.
 class ValueUniqueList<T> extends ValueList<T> {
-  factory ValueUniqueList(List<T> input) {
+  factory ValueUniqueList(
+    List<T> input, {
+    CustomValidate<List<T>>? customValidate,
+  }) {
     final result = validateCollectionUniqueItems(input);
-    return ValueUniqueList._(result);
+    return ValueUniqueList._(result, customValidate: customValidate);
   }
 
-  const ValueUniqueList._(super.value);
+  const ValueUniqueList._(super.value, {super.customValidate});
 }
 
 /// A list guaranteed to hold at least one element and to have all unique
 /// elements.
 class ValueUniqueListNotEmpty<T> extends ValueList<T> {
-  factory ValueUniqueListNotEmpty(List<T> input) {
+  factory ValueUniqueListNotEmpty(
+    List<T> input, {
+    CustomValidate<List<T>>? customValidate,
+  }) {
     final result = validateCollectionNotEmpty(
       input,
     ).flatMap(validateCollectionUniqueItems);
-    return ValueUniqueListNotEmpty._(result);
+    return ValueUniqueListNotEmpty._(result, customValidate: customValidate);
   }
 
-  const ValueUniqueListNotEmpty._(super.value);
+  const ValueUniqueListNotEmpty._(super.value, {super.customValidate});
 }
 
 /// A list guaranteed to contain a specific element.
 class ValueListContains<T> extends ValueList<T> {
-  factory ValueListContains(List<T> input, T item) {
+  factory ValueListContains(
+    List<T> input,
+    T item, {
+    CustomValidate<List<T>>? customValidate,
+  }) {
     final result = validateCollectionContains(input, item);
-    return ValueListContains._(result.map((_) => input));
+    return ValueListContains._(
+      result.map((_) => input),
+      customValidate: customValidate,
+    );
   }
 
-  const ValueListContains._(super.value);
+  const ValueListContains._(super.value, {super.customValidate});
 }
 
 /// A list guaranteed not to contain a specific element.
 class ValueListNotContains<T> extends ValueList<T> {
-  factory ValueListNotContains(List<T> input, T item) {
+  factory ValueListNotContains(
+    List<T> input,
+    T item, {
+    CustomValidate<List<T>>? customValidate,
+  }) {
     final result = validateCollectionNotContains(input, item);
-    return ValueListNotContains._(result);
+    return ValueListNotContains._(result, customValidate: customValidate);
   }
 
-  const ValueListNotContains._(super.value);
+  const ValueListNotContains._(super.value, {super.customValidate});
 }
 
 /// A list guaranteed to hold at least [min] elements.
 class ValueListMinLength<T> extends ValueList<T> {
-  factory ValueListMinLength(List<T> input, int min) {
+  factory ValueListMinLength(
+    List<T> input,
+    int min, {
+    CustomValidate<List<T>>? customValidate,
+  }) {
     final result = validateCollectionMinLength(input, min);
-    return ValueListMinLength._(result);
+    return ValueListMinLength._(result, customValidate: customValidate);
   }
 
-  const ValueListMinLength._(super.value);
+  const ValueListMinLength._(super.value, {super.customValidate});
 }
 
 /// A list guaranteed to hold at most [max] elements.
 class ValueListMaxLength<T> extends ValueList<T> {
-  factory ValueListMaxLength(List<T> input, int max) {
+  factory ValueListMaxLength(
+    List<T> input,
+    int max, {
+    CustomValidate<List<T>>? customValidate,
+  }) {
     final result = validateCollectionMaxLength(input, max);
-    return ValueListMaxLength._(result);
+    return ValueListMaxLength._(result, customValidate: customValidate);
   }
 
-  const ValueListMaxLength._(super.value);
+  const ValueListMaxLength._(super.value, {super.customValidate});
 }
 
 /// A list guaranteed to hold between [min] and [max] elements (inclusive).
@@ -200,57 +228,79 @@ class ValueListLengthRange<T> extends ValueList<T> {
     List<T> input, {
     required int min,
     required int max,
+    CustomValidate<List<T>>? customValidate,
   }) {
     final result = validateCollectionMinLength(
       input,
       min,
     ).flatMap((list) => validateCollectionMaxLength(list, max));
-    return ValueListLengthRange._(result);
+    return ValueListLengthRange._(result, customValidate: customValidate);
   }
 
-  const ValueListLengthRange._(super.value);
+  const ValueListLengthRange._(super.value, {super.customValidate});
 }
 
 /// An optional list. When present, behaves like [ValueListNotEmpty];
 /// when `null`, it is valid and resolves to `none`.
 class ValueOptionListNotEmpty<T> extends ValueOptionList<T> {
-  factory ValueOptionListNotEmpty(List<T>? input) {
+  factory ValueOptionListNotEmpty(
+    List<T>? input, {
+    CustomValidate<Option<List<T>>>? customValidate,
+  }) {
     if (input == null) {
-      return ValueOptionListNotEmpty._(right(const None()));
+      return ValueOptionListNotEmpty._(
+        right(const None()),
+        customValidate: customValidate,
+      );
     }
     final result = validateCollectionNotEmpty(input).map(some);
-    return ValueOptionListNotEmpty._(result);
+    return ValueOptionListNotEmpty._(result, customValidate: customValidate);
   }
 
-  const ValueOptionListNotEmpty._(super.value);
+  const ValueOptionListNotEmpty._(super.value, {super.customValidate});
 }
 
 /// An optional list. When present, behaves like [ValueUniqueList];
 /// when `null`, it is valid and resolves to `none`.
 class ValueOptionUniqueList<T> extends ValueOptionList<T> {
-  factory ValueOptionUniqueList(List<T>? input) {
+  factory ValueOptionUniqueList(
+    List<T>? input, {
+    CustomValidate<Option<List<T>>>? customValidate,
+  }) {
     if (input == null) {
-      return ValueOptionUniqueList._(right(const None()));
+      return ValueOptionUniqueList._(
+        right(const None()),
+        customValidate: customValidate,
+      );
     }
     final result = validateCollectionUniqueItems(input).map(some);
-    return ValueOptionUniqueList._(result);
+    return ValueOptionUniqueList._(result, customValidate: customValidate);
   }
 
-  const ValueOptionUniqueList._(super.value);
+  const ValueOptionUniqueList._(super.value, {super.customValidate});
 }
 
 /// An optional list. When present, behaves like [ValueUniqueListNotEmpty];
 /// when `null`, it is valid and resolves to `none`.
 class ValueOptionUniqueListNotEmpty<T> extends ValueOptionList<T> {
-  factory ValueOptionUniqueListNotEmpty(List<T>? input) {
+  factory ValueOptionUniqueListNotEmpty(
+    List<T>? input, {
+    CustomValidate<Option<List<T>>>? customValidate,
+  }) {
     if (input == null) {
-      return ValueOptionUniqueListNotEmpty._(right(const None()));
+      return ValueOptionUniqueListNotEmpty._(
+        right(const None()),
+        customValidate: customValidate,
+      );
     }
     final result = validateCollectionNotEmpty(
       input,
     ).flatMap(validateCollectionUniqueItems).map(some);
-    return ValueOptionUniqueListNotEmpty._(result);
+    return ValueOptionUniqueListNotEmpty._(
+      result,
+      customValidate: customValidate,
+    );
   }
 
-  const ValueOptionUniqueListNotEmpty._(super.value);
+  const ValueOptionUniqueListNotEmpty._(super.value, {super.customValidate});
 }

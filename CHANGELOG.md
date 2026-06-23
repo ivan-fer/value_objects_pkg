@@ -1,3 +1,12 @@
+## 1.2.0
+
+* Unified the `customValidate` hook across **all** value objects (previously only available on a few numeric types). Every value object now accepts an optional `customValidate` parameter to inject a business rule on top of the built-in validation.
+* Centralized the validation contract in `ValueObject<T>`: it now exposes a `customValidate` getter and a concrete `validate()` (`customValidate?.call(value) ?? value.failureMessage`); subclasses no longer reimplement `validate()`.
+* Replaced the unused, mis-typed `CustomValidate` typedef with a class-parameterized `typedef CustomValidate<T> = String? Function(Either<ValueFailure, T> value);`.
+* Added cross-module tests for the hook in `test/core/custom_validate_test.dart`.
+
+This is a non-breaking change: the public `customValidate` parameter name and signature used by the existing numeric value objects are preserved.
+
 ## 1.1.0
 
 * Added collection length value objects: `ValueListMinLength`, `ValueListMaxLength` and `ValueListLengthRange`, backed by new `ValueFailure.collTooFew` / `ValueFailure.collTooMany` failures.

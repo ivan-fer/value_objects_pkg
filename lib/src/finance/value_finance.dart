@@ -73,20 +73,24 @@ class ValueInterestRate extends ValueObject<double> {
   @override
   final Either<ValueFailure, double> value;
 
-  factory ValueInterestRate(String input, {double max = 100.0}) {
+  @override
+  final CustomValidate<double>? customValidate;
+
+  factory ValueInterestRate(
+    String input, {
+    double max = 100.0,
+    CustomValidate<double>? customValidate,
+  }) {
     final result = parseNumeric<double>(
       input,
     ).flatMap((v) => validateMin(v, 0.0)).flatMap((v) => validateMax(v, max));
-    return ValueInterestRate._(result);
+    return ValueInterestRate._(result, customValidate: customValidate);
   }
 
-  const ValueInterestRate._(this.value);
+  const ValueInterestRate._(this.value, {this.customValidate});
 
   /// Devuelve el valor decimal para cálculos (ej. 5.0 -> 0.05).
   double get asFraction => value.getOrElse((_) => 0.0) / 100;
-
-  @override
-  String? validate() => value.failureMessage;
 }
 
 /// Representa un puntaje de crédito (Credit Score).
@@ -95,14 +99,20 @@ class ValueCreditScore extends ValueObject<int> {
   @override
   final Either<ValueFailure, int> value;
 
-  factory ValueCreditScore(String input) {
+  @override
+  final CustomValidate<int>? customValidate;
+
+  factory ValueCreditScore(
+    String input, {
+    CustomValidate<int>? customValidate,
+  }) {
     final result = parseNumeric<int>(
       input,
     ).flatMap((v) => validateMin(v, 300)).flatMap((v) => validateMax(v, 850));
-    return ValueCreditScore._(result);
+    return ValueCreditScore._(result, customValidate: customValidate);
   }
 
-  const ValueCreditScore._(this.value);
+  const ValueCreditScore._(this.value, {this.customValidate});
 
   /// Retorna la categoría del puntaje basado en los rangos estándar de FICO.
   CreditScoreCategory get category {
@@ -117,9 +127,6 @@ class ValueCreditScore extends ValueObject<int> {
 
   /// Shortcut para obtener la recomendación basada en la categoría actual.
   String get recommendation => category.recommendation;
-
-  @override
-  String? validate() => value.failureMessage;
 }
 
 /// Gestiona montos monetarios vinculados a una moneda específica.
@@ -129,19 +136,26 @@ class ValueMoney extends ValueObject<(double, String)>
   @override
   final Either<ValueFailure, (double, String)> value;
 
+  @override
+  final CustomValidate<(double, String)>? customValidate;
+
   factory ValueMoney(
     String input, {
     String symbol = '\$',
     double min = 0.0,
     double? max,
+    CustomValidate<(double, String)>? customValidate,
   }) {
     final result = parseNumeric<double>(input)
         .flatMap((v) => validateMin(v, min))
         .flatMap((v) => max != null ? validateMax(v, max) : right(v));
-    return ValueMoney._(result.map((amount) => (amount, symbol)));
+    return ValueMoney._(
+      result.map((amount) => (amount, symbol)),
+      customValidate: customValidate,
+    );
   }
 
-  const ValueMoney._(this.value);
+  const ValueMoney._(this.value, {this.customValidate});
 
   /// Crea un objeto con valor cero.
   factory ValueMoney.zero({String symbol = '\$'}) =>
@@ -286,9 +300,6 @@ class ValueMoney extends ValueObject<(double, String)>
   }
 
   @override
-  String? validate() => value.failureMessage;
-
-  @override
   String toString() => value.fold(
     (f) => 'Invalid Money: $f',
     (r) => '${r.$2}${r.$1.toStringAsFixed(2)}',
@@ -300,19 +311,29 @@ class ValueOptionMoney extends ValueObject<Option<ValueMoney>> {
   @override
   final Either<ValueFailure, Option<ValueMoney>> value;
 
-  factory ValueOptionMoney(String? input, {String symbol = '\$'}) {
+  @override
+  final CustomValidate<Option<ValueMoney>>? customValidate;
+
+  factory ValueOptionMoney(
+    String? input, {
+    String symbol = '\$',
+    CustomValidate<Option<ValueMoney>>? customValidate,
+  }) {
     if (input == null || input.trim().isEmpty) {
-      return ValueOptionMoney.none();
+      return ValueOptionMoney._(right(none()), customValidate: customValidate);
     }
     final money = ValueMoney(input, symbol: symbol);
-    return ValueOptionMoney._(money.value.map((m) => some(money)));
+    return ValueOptionMoney._(
+      money.value.map((m) => some(money)),
+      customValidate: customValidate,
+    );
   }
 
   factory ValueOptionMoney.none() {
     return ValueOptionMoney._(right(none()));
   }
 
-  const ValueOptionMoney._(this.value);
+  const ValueOptionMoney._(this.value, {this.customValidate});
 
   double get amount => value.fold(
     (f) => 0.0,
@@ -322,9 +343,6 @@ class ValueOptionMoney extends ValueObject<Option<ValueMoney>> {
     (f) => '\$',
     (option) => option.getOrElse(() => ValueMoney.zero()).symbol,
   );
-
-  @override
-  String? validate() => value.failureMessage;
 }
 
 extension ValueMoneyIterableX on Iterable<ValueMoney> {
@@ -360,16 +378,19 @@ class ValueROI extends ValueObject<double> {
   @override
   final Either<ValueFailure, double> value;
 
-  factory ValueROI(String input) {
+  @override
+  final CustomValidate<double>? customValidate;
+
+  factory ValueROI(String input, {CustomValidate<double>? customValidate}) {
     // No ponemos límite superior ni inferior estricto,
     // solo validamos que sea un número.
-    return ValueROI._(parseNumeric<double>(input));
+    return ValueROI._(
+      parseNumeric<double>(input),
+      customValidate: customValidate,
+    );
   }
 
-  const ValueROI._(this.value);
-
-  @override
-  String? validate() => value.failureMessage;
+  const ValueROI._(this.value, {this.customValidate});
 }
 
 /// Representa la relación Deuda-Ingreso (Debt-to-Income ratio).
@@ -377,13 +398,16 @@ class ValueDTI extends ValueObject<double> {
   @override
   final Either<ValueFailure, double> value;
 
-  factory ValueDTI(String input) {
+  @override
+  final CustomValidate<double>? customValidate;
+
+  factory ValueDTI(String input, {CustomValidate<double>? customValidate}) {
     // El DTI es un porcentaje. Aunque usualmente es < 100, técnicamente
     // puede ser mayor si la deuda supera al ingreso. Validamos min 0.
     final result = parseNumeric<double>(
       input,
     ).flatMap((v) => validateMin(v, 0.0));
-    return ValueDTI._(result);
+    return ValueDTI._(result, customValidate: customValidate);
   }
 
   /// Calcula el DTI a partir de la deuda mensual total y el ingreso bruto mensual.
@@ -415,7 +439,7 @@ class ValueDTI extends ValueObject<double> {
     );
   }
 
-  const ValueDTI._(this.value);
+  const ValueDTI._(this.value, {this.customValidate});
 
   /// Devuelve el valor decimal para cálculos (ej. 36.0 -> 0.36).
   double get asFraction => value.getOrElse((_) => 0.0) / 100;
@@ -437,7 +461,4 @@ class ValueDTI extends ValueObject<double> {
 
   /// Retorna el mensaje de estado descriptivo (ej: "High Risk", "Good").
   String get statusMessage => category.label;
-
-  @override
-  String? validate() => value.failureMessage;
 }

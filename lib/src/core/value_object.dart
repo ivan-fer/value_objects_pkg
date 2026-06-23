@@ -9,10 +9,12 @@ extension ValueFailureEitherX<T> on Either<ValueFailure, T> {
       fold((failure) => failure.errorMessage, (_) => null);
 }
 
-/// Validator function used in Form Fields & passing in value objects.
-/// A function that return null if a ValueObject
-/// is valid or a failure text if not.
-typedef CustomValidate = String? Function<T>(Either<ValueFailure, T>)?;
+/// A user-supplied business rule for a value object.
+///
+/// Receives the object's [Either] value and returns an error message when the
+/// rule fails, or `null` when the value passes. It is run by [ValueObject.validate]
+/// before the built-in validation.
+typedef CustomValidate<T> = String? Function(Either<ValueFailure, T> value);
 
 //
 // Common methods for all ValueObjects:
@@ -44,6 +46,12 @@ abstract class ValueObject<T> {
 
   Either<ValueFailure, T> get value;
 
+  /// Optional, user-supplied business rule evaluated by [validate] before the
+  /// built-in validation. Subclasses expose it as a constructor parameter and
+  /// override this getter (usually with a final field). Defaults to `null`
+  /// (no custom rule).
+  CustomValidate<T>? get customValidate => null;
+
   /// Return the value or throw a fatal exception.
   /// Throws [UnexpectedValueError] containing the [ValueFailure]
   T get orCrash => value.getOrElse((f) => throw UnexpectedValueError(f));
@@ -60,8 +68,11 @@ abstract class ValueObject<T> {
   /// check if this object is valid or not
   bool get isValid => value.isRight();
 
-  /// Get info about an error, if any, or null if this object is valid
-  String? validate();
+  /// Get info about an error, if any, or null if this object is valid.
+  ///
+  /// Runs [customValidate] first (if provided); when it returns `null`, falls
+  /// back to the built-in failure message.
+  String? validate() => customValidate?.call(value) ?? value.failureMessage;
 
   @override
   bool operator ==(Object other) =>
