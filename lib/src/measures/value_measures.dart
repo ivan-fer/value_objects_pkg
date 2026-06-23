@@ -100,18 +100,24 @@ class ValueWhen extends ValueObject<DateTime> {
   @override
   final Either<ValueFailure, DateTime> value;
 
-  factory ValueWhen(DateTime input, {DateTime? minDate, DateTime? maxDate}) {
+  @override
+  final CustomValidate<DateTime>? customValidate;
+
+  factory ValueWhen(
+    DateTime input, {
+    DateTime? minDate,
+    DateTime? maxDate,
+    CustomValidate<DateTime>? customValidate,
+  }) {
     final defaultMinDate = minDate ?? DateTime(1900);
     final defaultMaxDate = maxDate ?? DateTime(2100);
     return ValueWhen._(
       validateDateRange(input, defaultMinDate, defaultMaxDate),
+      customValidate: customValidate,
     );
   }
 
-  const ValueWhen._(this.value);
-
-  @override
-  String? validate() => value.failureMessage;
+  const ValueWhen._(this.value, {this.customValidate});
 }
 
 /// Manage an optional [DateTime].
@@ -120,30 +126,41 @@ class ValueOptionWhen extends ValueObject<Option<DateTime>> {
   @override
   final Either<ValueFailure, Option<DateTime>> value;
 
+  @override
+  final CustomValidate<Option<DateTime>>? customValidate;
+
   factory ValueOptionWhen(
     DateTime? input, {
     DateTime? minDate,
     DateTime? maxDate,
+    CustomValidate<Option<DateTime>>? customValidate,
   }) {
-    if (input == null) return ValueOptionWhen._(right(const None()));
+    if (input == null) {
+      return ValueOptionWhen._(
+        right(const None()),
+        customValidate: customValidate,
+      );
+    }
     return ValueOptionWhen._(
       validateDateRange(
         input,
         minDate ?? DateTime(1900),
         maxDate ?? DateTime(2100),
       ).map(some),
+      customValidate: customValidate,
     );
   }
 
-  const ValueOptionWhen._(this.value);
-
-  @override
-  String? validate() => value.failureMessage;
+  const ValueOptionWhen._(this.value, {this.customValidate});
 }
 
 /// Gestiona fechas de nacimiento con validación de mayoría de edad (por defecto 18 años).
 class ValueBirthDate extends ValueWhen {
-  factory ValueBirthDate(DateTime input, {int minAge = 18}) {
+  factory ValueBirthDate(
+    DateTime input, {
+    int minAge = 18,
+    CustomValidate<DateTime>? customValidate,
+  }) {
     final now = DateTime.now();
     // Calculamos el límite superior (la fecha más tardía permitida para ser mayor de edad)
     final maxDate = DateTime(now.year - minAge, now.month, now.day);
@@ -163,10 +180,11 @@ class ValueBirthDate extends ValueWhen {
           orElse: () => f,
         ),
       ),
+      customValidate: customValidate,
     );
   }
 
-  const ValueBirthDate._(super.value) : super._();
+  const ValueBirthDate._(super.value, {super.customValidate}) : super._();
 }
 
 /// If min and max are provided, the distance must be in that range.
@@ -175,19 +193,24 @@ class ValueDistance extends ValueObject<Distance> {
   @override
   final Either<ValueFailure, Distance> value;
 
+  @override
+  final CustomValidate<Distance>? customValidate;
+
   Distance get orZero => value.getOrElse((f) => Distance.zero);
 
-  factory ValueDistance(Distance distance, {Distance? min, Distance? max}) {
+  factory ValueDistance(
+    Distance distance, {
+    Distance? min,
+    Distance? max,
+    CustomValidate<Distance>? customValidate,
+  }) {
     final result = validateDistanceNotZero(
       distance,
     ).flatMap((d) => validateDistanceRange(d, min: min, max: max));
-    return ValueDistance._(result);
+    return ValueDistance._(result, customValidate: customValidate);
   }
 
-  const ValueDistance._(this.value);
-
-  @override
-  String? validate() => value.failureMessage;
+  const ValueDistance._(this.value, {this.customValidate});
 }
 
 /// If min and max are provided, the duration must be in that range.
@@ -196,17 +219,22 @@ class ValueDuration extends ValueObject<Duration> {
   @override
   final Either<ValueFailure, Duration> value;
 
+  @override
+  final CustomValidate<Duration>? customValidate;
+
   Duration get orZero => value.getOrElse((f) => Duration.zero);
 
-  factory ValueDuration(Duration moment, {Duration? min, Duration? max}) {
+  factory ValueDuration(
+    Duration moment, {
+    Duration? min,
+    Duration? max,
+    CustomValidate<Duration>? customValidate,
+  }) {
     final result = validateDurationNotZero(
       moment,
     ).flatMap((d) => validateDurationRange(d, min: min, max: max));
-    return ValueDuration._(result);
+    return ValueDuration._(result, customValidate: customValidate);
   }
 
-  const ValueDuration._(this.value);
-
-  @override
-  String? validate() => value.failureMessage;
+  const ValueDuration._(this.value, {this.customValidate});
 }

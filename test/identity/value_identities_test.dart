@@ -1,4 +1,4 @@
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 import 'package:value_objects_pkg/src/identity/value_identities.dart';
 
 void main() {

@@ -10,15 +10,17 @@ class UniqueId extends ValueObject<String> {
   @override
   final Either<ValueFailure, String> value;
 
+  @override
+  final CustomValidate<String>? customValidate;
+
   factory UniqueId() => UniqueId._(right(const Uuid().v4()));
 
-  factory UniqueId.fromUniqueString(String uniqueId) =>
-      UniqueId._(validateUniqueId(uniqueId));
+  factory UniqueId.fromUniqueString(
+    String uniqueId, {
+    CustomValidate<String>? customValidate,
+  }) => UniqueId._(validateUniqueId(uniqueId), customValidate: customValidate);
 
-  const UniqueId._(this.value);
-
-  @override
-  String? validate() => value.failureMessage;
+  const UniqueId._(this.value, {this.customValidate});
 
   static Either<ValueFailure, String> validateUniqueId(String input) {
     if (input.isEmpty) {
@@ -34,29 +36,44 @@ class UniqueId extends ValueObject<String> {
 
 /// Gestiona nombres de personas. Valida caracteres alfabéticos y acentos.
 class ValueName extends ValueText {
-  factory ValueName(String input) {
-    return ValueName._(_validatePersonalName(input));
+  factory ValueName(String input, {CustomValidate<String>? customValidate}) {
+    return ValueName._(
+      _validatePersonalName(input),
+      customValidate: customValidate,
+    );
   }
 
-  const ValueName._(super.value);
+  const ValueName._(super.value, {super.customValidate});
 }
 
 /// Gestiona apellidos de personas. Usa la misma lógica que [ValueName].
 class ValueLastName extends ValueText {
-  factory ValueLastName(String input) {
-    return ValueLastName._(_validatePersonalName(input));
+  factory ValueLastName(
+    String input, {
+    CustomValidate<String>? customValidate,
+  }) {
+    return ValueLastName._(
+      _validatePersonalName(input),
+      customValidate: customValidate,
+    );
   }
 
-  const ValueLastName._(super.value);
+  const ValueLastName._(super.value, {super.customValidate});
 }
 
 /// Valida direcciones de correo electrónico mediante expresiones regulares.
 class ValueEmailAddress extends ValueText {
-  factory ValueEmailAddress(String input) {
-    return ValueEmailAddress._(_validateEmail(input));
+  factory ValueEmailAddress(
+    String input, {
+    CustomValidate<String>? customValidate,
+  }) {
+    return ValueEmailAddress._(
+      _validateEmail(input),
+      customValidate: customValidate,
+    );
   }
 
-  const ValueEmailAddress._(super.value);
+  const ValueEmailAddress._(super.value, {super.customValidate});
 
   static Either<ValueFailure, String> _validateEmail(String input) {
     const emailRegex =
@@ -75,34 +92,51 @@ class ValueEmailAddress extends ValueText {
 /// - Mínimo 8 caracteres.
 /// - Al menos una mayúscula, una minúscula, un número y un carácter especial.
 class ValuePassword extends ValueText {
-  factory ValuePassword(String input) {
-    return ValuePassword._(_validatePassword(input));
+  factory ValuePassword(
+    String input, {
+    CustomValidate<String>? customValidate,
+  }) {
+    return ValuePassword._(
+      _validatePassword(input),
+      customValidate: customValidate,
+    );
   }
 
-  const ValuePassword._(super.value);
+  const ValuePassword._(super.value, {super.customValidate});
 }
 
 /// Valida que una contraseña de confirmación coincida exactamente con la original.
 class ValuePasswordConfirm extends ValueText {
-  factory ValuePasswordConfirm(String input, String original) {
+  factory ValuePasswordConfirm(
+    String input,
+    String original, {
+    CustomValidate<String>? customValidate,
+  }) {
     if (input != original) {
       return ValuePasswordConfirm._(
         left(const ValueFailure.invalid(message: 'Passwords do not match')),
+        customValidate: customValidate,
       );
     }
-    return ValuePasswordConfirm._(right(input));
+    return ValuePasswordConfirm._(right(input), customValidate: customValidate);
   }
 
-  const ValuePasswordConfirm._(super.value);
+  const ValuePasswordConfirm._(super.value, {super.customValidate});
 }
 
 /// Valida un número de teléfono con formato internacional básico.
 class ValuePhoneNumber extends ValueText {
-  factory ValuePhoneNumber(String input) {
-    return ValuePhoneNumber._(_validatePhoneNumber(input));
+  factory ValuePhoneNumber(
+    String input, {
+    CustomValidate<String>? customValidate,
+  }) {
+    return ValuePhoneNumber._(
+      _validatePhoneNumber(input),
+      customValidate: customValidate,
+    );
   }
 
-  const ValuePhoneNumber._(super.value);
+  const ValuePhoneNumber._(super.value, {super.customValidate});
 }
 
 // ---------------------------------------------------------------------------
@@ -110,39 +144,55 @@ class ValuePhoneNumber extends ValueText {
 // ---------------------------------------------------------------------------
 
 class ValueOptionName extends ValueOptionText {
-  factory ValueOptionName(String? input) {
+  factory ValueOptionName(
+    String? input, {
+    CustomValidate<Option<String>>? customValidate,
+  }) {
     return ValueOptionName._(
       ValueOptionText.validator(input, (s) => ValueName(s)),
+      customValidate: customValidate,
     );
   }
-  const ValueOptionName._(super.value);
+  const ValueOptionName._(super.value, {super.customValidate});
 }
 
 class ValueOptionLastName extends ValueOptionText {
-  factory ValueOptionLastName(String? input) {
+  factory ValueOptionLastName(
+    String? input, {
+    CustomValidate<Option<String>>? customValidate,
+  }) {
     return ValueOptionLastName._(
       ValueOptionText.validator(input, (s) => ValueLastName(s)),
+      customValidate: customValidate,
     );
   }
-  const ValueOptionLastName._(super.value);
+  const ValueOptionLastName._(super.value, {super.customValidate});
 }
 
 class ValueOptionEmailAddress extends ValueOptionText {
-  factory ValueOptionEmailAddress(String? input) {
+  factory ValueOptionEmailAddress(
+    String? input, {
+    CustomValidate<Option<String>>? customValidate,
+  }) {
     return ValueOptionEmailAddress._(
       ValueOptionText.validator(input, (s) => ValueEmailAddress(s)),
+      customValidate: customValidate,
     );
   }
-  const ValueOptionEmailAddress._(super.value);
+  const ValueOptionEmailAddress._(super.value, {super.customValidate});
 }
 
 class ValueOptionPhoneNumber extends ValueOptionText {
-  factory ValueOptionPhoneNumber(String? input) {
+  factory ValueOptionPhoneNumber(
+    String? input, {
+    CustomValidate<Option<String>>? customValidate,
+  }) {
     return ValueOptionPhoneNumber._(
       ValueOptionText.validator(input, (s) => ValuePhoneNumber(s)),
+      customValidate: customValidate,
     );
   }
-  const ValueOptionPhoneNumber._(super.value);
+  const ValueOptionPhoneNumber._(super.value, {super.customValidate});
 }
 
 // ---------------------------------------------------------------------------

@@ -40,13 +40,17 @@ class ValueEnum<T extends IEnumWithNone> extends ValueObject<T> {
   @override
   final Either<ValueFailure, T> value;
 
-  factory ValueEnum(T input, {String? errorMessage}) {
+  @override
+  final CustomValidate<T>? customValidate;
+
+  factory ValueEnum(
+    T input, {
+    String? errorMessage,
+    CustomValidate<T>? customValidate,
+  }) {
     final result = validateEnumNotNone(input, errorMessage: errorMessage);
-    return ValueEnum._(result);
+    return ValueEnum._(result, customValidate: customValidate);
   }
 
-  const ValueEnum._(this.value);
-
-  @override
-  String? validate() => value.failureMessage;
+  const ValueEnum._(this.value, {this.customValidate});
 }
