@@ -1,5 +1,5 @@
 import 'package:distance/distance.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:test/test.dart';
 import 'package:value_objects_pkg/src/core/value_failure.dart';
 import 'package:value_objects_pkg/src/measures/value_measures.dart';
 

@@ -275,8 +275,9 @@ class ValueOptionUrl extends ValueObject<Option<Uri>> {
   final Either<ValueFailure, Option<Uri>> value;
 
   factory ValueOptionUrl(String? input) {
-    if (input == null || input.trim().isEmpty)
+    if (input == null || input.trim().isEmpty) {
       return ValueOptionUrl._(right(none()));
+    }
     return ValueOptionUrl._(ValueUrl(input).value.map(some));
   }
 

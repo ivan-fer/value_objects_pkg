@@ -29,6 +29,16 @@ sealed class ValueFailure with _$ValueFailure {
         'Date must be between ${min.year} and ${max.year}',
       FutureDateNotAllowed() => 'Future dates are not allowed',
       DateTooOld() => 'The date provided is too far in the past',
+      ItemEmpty() => 'The collection cannot be empty',
+      ItemRepeats() => 'The collection cannot contain repeated items',
+      CollNotContains(nameItem: final item) =>
+        'The collection must contain "$item"',
+      CollContains(nameItem: final item) =>
+        'The collection must not contain "$item"',
+      CollTooFew(minAllow: final min, total: final total) =>
+        'Too few items (entered $total, minimum is $min)',
+      CollTooMany(maxAllow: final max, total: final total) =>
+        'Too many items ($total/$max)',
       _ =>
         'Invalid value', // Fallback genérico (incluye Invalid y errores no explícitos)
     };
@@ -249,6 +259,32 @@ sealed class ValueFailure with _$ValueFailure {
     @Default('') String message,
     @Default('') String nameItem,
   }) = CollNotContains;
+
+  /// Collection contains a specified item
+  const factory ValueFailure.collContains({
+    /// string name of the object with failure
+    @Default('') String nameObject,
+    @Default('') String message,
+    @Default('') String nameItem,
+  }) = CollContains;
+
+  /// Collection has fewer items than allowed
+  const factory ValueFailure.collTooFew({
+    /// string name of the object with failure
+    @Default('') String nameObject,
+    @Default('') String message,
+    required int minAllow,
+    required int total,
+  }) = CollTooFew;
+
+  /// Collection has more items than allowed
+  const factory ValueFailure.collTooMany({
+    /// string name of the object with failure
+    @Default('') String nameObject,
+    @Default('') String message,
+    required int maxAllow,
+    required int total,
+  }) = CollTooMany;
 
   const factory ValueFailure.insufficientStock({
     @Default('') String nameObject,
