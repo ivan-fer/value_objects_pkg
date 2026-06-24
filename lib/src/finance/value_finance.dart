@@ -462,3 +462,119 @@ class ValueDTI extends ValueObject<double> {
   /// Retorna el mensaje de estado descriptivo (ej: "High Risk", "Good").
   String get statusMessage => category.label;
 }
+
+/// Representa un IBAN (International Bank Account Number) según ISO 13616.
+///
+/// Acepta el número con o sin espacios y en cualquier capitalización. Valida la
+/// estructura básica (2 letras de país, 2 dígitos de control y hasta 30
+/// caracteres alfanuméricos) y el checksum módulo 97. El valor almacenado es el
+/// IBAN normalizado: en mayúsculas y sin espacios.
+class ValueIban extends ValueObject<String> {
+  @override
+  final Either<ValueFailure, String> value;
+
+  @override
+  final CustomValidate<String>? customValidate;
+
+  factory ValueIban(String input, {CustomValidate<String>? customValidate}) {
+    return ValueIban._(_validateIban(input), customValidate: customValidate);
+  }
+
+  const ValueIban._(this.value, {this.customValidate});
+
+  /// Devuelve el IBAN agrupado en bloques de 4 caracteres (ej. para mostrar en
+  /// UI: `ES91 2100 0418 4502 0005 1332`), o string vacío si es inválido.
+  String get formatted => value.fold((_) => '', (iban) {
+    final groups = <String>[];
+    for (var i = 0; i < iban.length; i += 4) {
+      groups.add(iban.substring(i, i + 4 > iban.length ? iban.length : i + 4));
+    }
+    return groups.join(' ');
+  });
+
+  /// Devuelve el código de país (2 letras) del IBAN, o string vacío si es inválido.
+  String get countryCode =>
+      value.fold((_) => '', (iban) => iban.substring(0, 2));
+}
+
+class ValueOptionIban extends ValueObject<Option<String>> {
+  @override
+  final Either<ValueFailure, Option<String>> value;
+
+  @override
+  final CustomValidate<Option<String>>? customValidate;
+
+  factory ValueOptionIban(
+    String? input, {
+    CustomValidate<Option<String>>? customValidate,
+  }) {
+    if (input == null || input.trim().isEmpty) {
+      return ValueOptionIban._(right(none()), customValidate: customValidate);
+    }
+    return ValueOptionIban._(
+      _validateIban(input).map(some),
+      customValidate: customValidate,
+    );
+  }
+
+  const ValueOptionIban._(this.value, {this.customValidate});
+
+  /// Devuelve el IBAN normalizado o string vacío si es none o inválido.
+  String get orEmpty =>
+      value.fold((_) => '', (opt) => opt.getOrElse(() => ''));
+}
+
+/// Valida un IBAN según ISO 13616 (formato + checksum módulo 97).
+///
+/// Normaliza el valor (mayúsculas, sin espacios) antes de validar.
+Either<ValueFailure, String> _validateIban(String input) {
+  final iban = input.replaceAll(RegExp(r'\s'), '').toUpperCase();
+
+  if (iban.isEmpty) {
+    return left(const ValueFailure.strEmpty(nameObject: 'IBAN'));
+  }
+
+  // Estructura: 2 letras (país) + 2 dígitos (control) + 1-30 alfanuméricos.
+  final ibanRegex = RegExp(r'^[A-Z]{2}[0-9]{2}[A-Z0-9]{1,30}$');
+  if (!ibanRegex.hasMatch(iban)) {
+    return left(
+      const ValueFailure.strInvalidChars(
+        nameObject: 'IBAN',
+        message: 'El formato del IBAN no es válido',
+      ),
+    );
+  }
+
+  if (!_isValidIbanChecksum(iban)) {
+    return left(
+      const ValueFailure.invalid(
+        nameObject: 'IBAN',
+        message: 'El dígito de control del IBAN no es válido',
+      ),
+    );
+  }
+
+  return right(iban);
+}
+
+/// Verifica el checksum módulo 97 de un IBAN ya normalizado.
+///
+/// Mueve los 4 primeros caracteres al final, convierte cada letra a dos dígitos
+/// (A=10 … Z=35) y comprueba que el número resultante sea congruente con 1 mód 97.
+bool _isValidIbanChecksum(String iban) {
+  final rearranged = iban.substring(4) + iban.substring(0, 4);
+
+  // Calculamos el módulo de forma incremental para evitar enteros enormes.
+  var remainder = 0;
+  for (final char in rearranged.split('')) {
+    // 0-9 -> "0".."9"; A-Z -> "10".."35".
+    final chunk = RegExp(r'[0-9]').hasMatch(char)
+        ? char
+        : (char.codeUnitAt(0) - 'A'.codeUnitAt(0) + 10).toString();
+    for (final digit in chunk.split('')) {
+      remainder = (remainder * 10 + int.parse(digit)) % 97;
+    }
+  }
+
+  return remainder == 1;
+}

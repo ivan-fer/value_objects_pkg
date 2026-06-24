@@ -139,6 +139,36 @@ class ValuePhoneNumber extends ValueText {
   const ValuePhoneNumber._(super.value, {super.customValidate});
 }
 
+/// Valida un nombre de usuario (handle).
+///
+/// Debe comenzar con una letra y contener solo letras, dígitos, guiones bajos
+/// o puntos, con una longitud de 3 a 20 caracteres. Se recortan los espacios.
+class ValueUsername extends ValueText {
+  factory ValueUsername(String input, {CustomValidate<String>? customValidate}) {
+    return ValueUsername._(
+      _validateUsername(input),
+      customValidate: customValidate,
+    );
+  }
+
+  const ValueUsername._(super.value, {super.customValidate});
+}
+
+/// Valida un número de pasaporte genérico.
+///
+/// Acepta de 6 a 9 caracteres alfanuméricos. El valor se normaliza a
+/// mayúsculas y sin espacios.
+class ValuePassport extends ValueText {
+  factory ValuePassport(String input, {CustomValidate<String>? customValidate}) {
+    return ValuePassport._(
+      _validatePassport(input),
+      customValidate: customValidate,
+    );
+  }
+
+  const ValuePassport._(super.value, {super.customValidate});
+}
+
 // ---------------------------------------------------------------------------
 // Versiones Opcionales
 // ---------------------------------------------------------------------------
@@ -195,6 +225,32 @@ class ValueOptionPhoneNumber extends ValueOptionText {
   const ValueOptionPhoneNumber._(super.value, {super.customValidate});
 }
 
+class ValueOptionUsername extends ValueOptionText {
+  factory ValueOptionUsername(
+    String? input, {
+    CustomValidate<Option<String>>? customValidate,
+  }) {
+    return ValueOptionUsername._(
+      ValueOptionText.validator(input, (s) => ValueUsername(s)),
+      customValidate: customValidate,
+    );
+  }
+  const ValueOptionUsername._(super.value, {super.customValidate});
+}
+
+class ValueOptionPassport extends ValueOptionText {
+  factory ValueOptionPassport(
+    String? input, {
+    CustomValidate<Option<String>>? customValidate,
+  }) {
+    return ValueOptionPassport._(
+      ValueOptionText.validator(input, (s) => ValuePassport(s)),
+      customValidate: customValidate,
+    );
+  }
+  const ValueOptionPassport._(super.value, {super.customValidate});
+}
+
 // ---------------------------------------------------------------------------
 // Funciones de Validación Privadas
 // ---------------------------------------------------------------------------
@@ -244,4 +300,48 @@ Either<ValueFailure, String> _validatePhoneNumber(String input) {
     );
   }
   return right(trimmed);
+}
+
+/// Valida un nombre de usuario: 3-20 caracteres, comienza con una letra y solo
+/// contiene letras, dígitos, guiones bajos o puntos.
+Either<ValueFailure, String> _validateUsername(String input) {
+  final trimmed = input.trim();
+  if (trimmed.isEmpty) {
+    return left(const ValueFailure.strEmpty(nameObject: 'Username'));
+  }
+
+  final usernameRegex = RegExp(r'^[a-zA-Z][a-zA-Z0-9._]{2,19}$');
+  if (!usernameRegex.hasMatch(trimmed)) {
+    return left(
+      const ValueFailure.strInvalidChars(
+        nameObject: 'Username',
+        message:
+            'El usuario debe tener 3-20 caracteres, comenzar con una letra y '
+            'usar solo letras, dígitos, "_" o "."',
+      ),
+    );
+  }
+
+  return right(trimmed);
+}
+
+/// Valida un número de pasaporte genérico: 6-9 caracteres alfanuméricos.
+/// Normaliza a mayúsculas y elimina espacios.
+Either<ValueFailure, String> _validatePassport(String input) {
+  final normalized = input.replaceAll(RegExp(r'\s'), '').toUpperCase();
+  if (normalized.isEmpty) {
+    return left(const ValueFailure.strEmpty(nameObject: 'Passport'));
+  }
+
+  final passportRegex = RegExp(r'^[A-Z0-9]{6,9}$');
+  if (!passportRegex.hasMatch(normalized)) {
+    return left(
+      const ValueFailure.strInvalidChars(
+        nameObject: 'Passport',
+        message: 'El pasaporte debe tener 6-9 caracteres alfanuméricos',
+      ),
+    );
+  }
+
+  return right(normalized);
 }

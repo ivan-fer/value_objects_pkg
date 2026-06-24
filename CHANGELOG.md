@@ -1,3 +1,11 @@
+## 1.3.0
+
+* Added identity value objects: `ValueUsername` (3-20 chars, must start with a letter, allows letters/digits/`_`/`.`) and `ValuePassport` (6-9 alphanumeric characters, normalized to uppercase), each with an optional `ValueOption*` variant.
+* Added the finance value object `ValueIban` (ISO 13616: structure check plus the mod-97 checksum), with `formatted` and `countryCode` getters and an optional `ValueOptionIban` variant.
+* Added Uruguay-specific value objects `ValueCedula` (cédula de identidad, check-digit validated) and `ValueRut` (RUT/DGI, 12 digits, check-digit validated), each with an optional variant.
+* Country-specific value objects are exposed through a separate opt-in entry point so the main barrel stays international: `import 'package:value_objects_pkg/uruguay.dart';`. They live under `lib/src/regional/` to scale to additional countries.
+* Added test coverage for all the new value objects (`test/regional/uruguay_test.dart`, `test/identity/value_username_passport_test.dart`, `test/finance/value_iban_test.dart`).
+
 ## 1.2.0
 
 * Unified the `customValidate` hook across **all** value objects (previously only available on a few numeric types). Every value object now accepts an optional `customValidate` parameter to inject a business rule on top of the built-in validation.
